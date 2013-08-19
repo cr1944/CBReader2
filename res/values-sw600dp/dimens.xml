@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="action_button_min_width">64dp</dimen>
+    <dimen name="text_size_xlarge">32sp</dimen>
+</resources>
