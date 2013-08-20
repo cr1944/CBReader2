@@ -66,7 +66,7 @@ public class PageListAdapter extends CursorAdapter {
         textView.setText(Html.fromHtml(text));
         Picasso.with(mContext)
         .load(logo)
-        //.placeholder(R.drawable.ic_launcher)
+        .placeholder(R.drawable.ic_launcher)
         .into(imageView);
     }
 
