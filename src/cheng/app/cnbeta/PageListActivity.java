@@ -35,11 +35,9 @@ import android.view.MenuItem;
  */
 public class PageListActivity extends FragmentActivity implements PageListFragment.Callbacks,
         TabListener, OnPageChangeListener {
+    public static final String NEWS_FRAGMENT = "cb_news_fragment";
+    public static final String COMMENTS_FRAGMENT = "cb_comments_fragment";
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
     private boolean mTwoPane;
     private PageFragmentAdapter mPageFragmentAdapter;
     private ViewPager mViewPager;
@@ -55,12 +53,13 @@ public class PageListActivity extends FragmentActivity implements PageListFragme
         if (mViewPager == null) {
             mTwoPane = true;
         }
+        boolean shortPageWidth = getResources().getBoolean(R.bool.short_page_width);
         final ActionBar bar = getActionBar();
         bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_SHOW_HOME,
                 ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_HOME_AS_UP);
         final FragmentManager fm = getSupportFragmentManager();
         if (!mTwoPane) {
-            mPageFragmentAdapter = new PageFragmentAdapter(fm);
+            mPageFragmentAdapter = new PageFragmentAdapter(fm, shortPageWidth);
             mViewPager.setAdapter(mPageFragmentAdapter);
             mViewPager.setOnPageChangeListener(this);
             bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -72,18 +71,28 @@ public class PageListActivity extends FragmentActivity implements PageListFragme
                     .setTabListener(this));
         } else {
             FragmentTransaction ft = fm.beginTransaction();
-            Bundle arg1 = new Bundle();
-            arg1.putBoolean(PageListFragment.ARG_IS_TWO_PANE, true);
-            arg1.putInt(PageListFragment.ARG_PAGE, 0);
-            PageListFragment f1 = new PageListFragment();
-            f1.setArguments(arg1);
-            ft.add(R.id.fragment_news_list, f1);
-            Bundle arg2 = new Bundle();
-            arg2.putBoolean(PageListFragment.ARG_IS_TWO_PANE, true);
-            arg2.putInt(PageListFragment.ARG_PAGE, 1);
-            PageListFragment f2 = new PageListFragment();
-            f2.setArguments(arg2);
-            ft.add(R.id.fragment_hot_comments, f2);
+            Fragment f1 = fm.findFragmentByTag(NEWS_FRAGMENT);
+            if (f1 == null) {
+                Bundle arg1 = new Bundle();
+                arg1.putBoolean(PageListFragment.ARG_IS_TWO_PANE, true);
+                arg1.putInt(PageListFragment.ARG_PAGE, 0);
+                f1 = new PageListFragment();
+                f1.setArguments(arg1);
+                ft.add(R.id.fragment_news_list, f1, NEWS_FRAGMENT);
+            } else {
+                ft.attach(f1);
+            }
+            Fragment f2 = fm.findFragmentByTag(COMMENTS_FRAGMENT);
+            if (f2 == null) {
+                Bundle arg2 = new Bundle();
+                arg2.putBoolean(PageListFragment.ARG_IS_TWO_PANE, true);
+                arg2.putInt(PageListFragment.ARG_PAGE, 1);
+                f2 = new PageListFragment();
+                f2.setArguments(arg2);
+                ft.add(R.id.fragment_hot_comments, f2, COMMENTS_FRAGMENT);
+            } else {
+                ft.attach(f2);
+            }
             ft.commit();
         }
 
