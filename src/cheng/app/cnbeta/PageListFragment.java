@@ -104,12 +104,6 @@ public class PageListFragment extends ListFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_IS_TWO_PANE)) {
-            mTwoPane = getArguments().getBoolean(ARG_IS_TWO_PANE);
-        }
-        if (getArguments().containsKey(ARG_PAGE)) {
-            mPageId = getArguments().getInt(ARG_PAGE, PAGE_NEWS);
-        }
         mIsReCreated = savedInstanceState != null;
         setHasOptionsMenu(true);
     }
@@ -117,6 +111,25 @@ public class PageListFragment extends ListFragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mPullToRefreshAttacher = ((PageListActivity) getActivity())
+                .getPullToRefreshAttacher();
+        mPullToRefreshAttacher.addRefreshableView(getListView(), this);
+        if (getArguments().containsKey(ARG_IS_TWO_PANE)) {
+            mTwoPane = getArguments().getBoolean(ARG_IS_TWO_PANE);
+        }
+        if (getArguments().containsKey(ARG_PAGE)) {
+            mPageId = getArguments().getInt(ARG_PAGE, PAGE_NEWS);
+        }
+        // In two-pane mode, list items should be given the
+        // 'activated' state when touched.
+        if (mTwoPane) {
+            setActivateOnItemClick(true);
+        }
+        // Restore the previously serialized activated item position.
+        if (savedInstanceState != null
+                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
+            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
+        }
         mAdapter = new PageListAdapter(getActivity(), mPageId);
         setListAdapter(mAdapter);
 
@@ -138,26 +151,13 @@ public class PageListFragment extends ListFragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v =  super.onCreateView(inflater, container, savedInstanceState);
-        mPullToRefreshAttacher = ((PageListActivity) getActivity())
-                .getPullToRefreshAttacher();
         return v;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mPullToRefreshAttacher.addRefreshableView(getListView(), this);
 
-        // In two-pane mode, list items should be given the
-        // 'activated' state when touched.
-        if (mTwoPane) {
-            setActivateOnItemClick(true);
-        }
-        // Restore the previously serialized activated item position.
-        if (savedInstanceState != null
-                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
-        }
     }
 
     @Override

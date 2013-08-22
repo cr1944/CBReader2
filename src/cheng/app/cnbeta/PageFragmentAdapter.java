@@ -8,18 +8,16 @@ import android.view.ViewGroup;
 
 public class PageFragmentAdapter extends FragmentPagerAdapter {
     static final int PAGE_NUMBER = 2;
-    private final boolean mTwoPane;
 
-    public PageFragmentAdapter(FragmentManager fm, boolean isTowPane) {
+    public PageFragmentAdapter(FragmentManager fm) {
         super(fm);
-        mTwoPane = isTowPane;
     }
 
     @Override
     public Fragment getItem(int arg0) {
         PageListFragment f = new PageListFragment();
         Bundle arguments = new Bundle();
-        arguments.putBoolean(PageListFragment.ARG_IS_TWO_PANE, mTwoPane);
+        arguments.putBoolean(PageListFragment.ARG_IS_TWO_PANE, false);
         arguments.putInt(PageListFragment.ARG_PAGE, arg0);
         f.setArguments(arguments);
         return f;

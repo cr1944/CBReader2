@@ -2,13 +2,16 @@
 package cheng.app.cnbeta;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
+
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Menu;
@@ -45,31 +48,44 @@ public class PageListActivity extends FragmentActivity implements PageListFragme
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final ActionBar bar = getActionBar();
-        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE, ActionBar.DISPLAY_SHOW_TITLE);
         setContentView(R.layout.activity_page_list);
+        mViewPager = (ViewPager) findViewById(R.id.list_pager);
         mPullToRefreshAttacher = PullToRefreshAttacher.get(this);
 
-        if (findViewById(R.id.page_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-large and
-            // res/values-sw600dp). If this view is present, then the
-            // activity should be in two-pane mode.
+        if (mViewPager == null) {
             mTwoPane = true;
-
         }
-        mPageFragmentAdapter = new PageFragmentAdapter(
-                        getSupportFragmentManager(), mTwoPane);
-        mViewPager = (ViewPager) findViewById(R.id.list_pager);
-        mViewPager.setAdapter(mPageFragmentAdapter);
-        mViewPager.setOnPageChangeListener(this);
-        bar.addTab(bar.newTab()
-                .setText(R.string.page_title_news)
-                .setTabListener(this));
-        bar.addTab(bar.newTab()
-                .setText(R.string.page_title_comments)
-                .setTabListener(this));
+        final ActionBar bar = getActionBar();
+        bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_SHOW_HOME,
+                ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_HOME_AS_UP);
+        final FragmentManager fm = getSupportFragmentManager();
+        if (!mTwoPane) {
+            mPageFragmentAdapter = new PageFragmentAdapter(fm);
+            mViewPager.setAdapter(mPageFragmentAdapter);
+            mViewPager.setOnPageChangeListener(this);
+            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+            bar.addTab(bar.newTab()
+                    .setText(R.string.page_title_news)
+                    .setTabListener(this));
+            bar.addTab(bar.newTab()
+                    .setText(R.string.page_title_comments)
+                    .setTabListener(this));
+        } else {
+            FragmentTransaction ft = fm.beginTransaction();
+            Bundle arg1 = new Bundle();
+            arg1.putBoolean(PageListFragment.ARG_IS_TWO_PANE, true);
+            arg1.putInt(PageListFragment.ARG_PAGE, 0);
+            PageListFragment f1 = new PageListFragment();
+            f1.setArguments(arg1);
+            ft.add(R.id.fragment_news_list, f1);
+            Bundle arg2 = new Bundle();
+            arg2.putBoolean(PageListFragment.ARG_IS_TWO_PANE, true);
+            arg2.putInt(PageListFragment.ARG_PAGE, 1);
+            PageListFragment f2 = new PageListFragment();
+            f2.setArguments(arg2);
+            ft.add(R.id.fragment_hot_comments, f2);
+            ft.commit();
+        }
 
         // TODO: If exposing deep links into your app, handle intents here.
     }
@@ -84,24 +100,9 @@ public class PageListActivity extends FragmentActivity implements PageListFragme
      */
     @Override
     public void onItemSelected(String id) {
-        if (mTwoPane) {
-            // In two-pane mode, show the detail view in this activity by
-            // adding or replacing the detail fragment using a
-            // fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(PageDetailFragment.ARG_ITEM_ID, id);
-            PageDetailFragment fragment = new PageDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.page_detail_container, fragment).commit();
-
-        } else {
-            // In single-pane mode, simply start the detail activity
-            // for the selected item ID.
-            Intent detailIntent = new Intent(this, PageDetailActivity.class);
-            detailIntent.putExtra(PageDetailFragment.ARG_ITEM_ID, id);
-            startActivity(detailIntent);
-        }
+        Intent detailIntent = new Intent(this, PageDetailActivity.class);
+        detailIntent.putExtra(PageDetailFragment.ARG_ITEM_ID, id);
+        startActivity(detailIntent);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -112,19 +113,20 @@ public class PageListActivity extends FragmentActivity implements PageListFragme
     }
 
     @Override
-    public void onTabReselected(Tab tab, FragmentTransaction ft) {
+    public void onTabReselected(Tab tab, android.app.FragmentTransaction ft) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void onTabSelected(Tab tab, FragmentTransaction ft) {
-        mViewPager.setCurrentItem(tab.getPosition());
+    public void onTabSelected(Tab tab, android.app.FragmentTransaction ft) {
+        if (!mTwoPane)
+            mViewPager.setCurrentItem(tab.getPosition());
 
     }
 
     @Override
-    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+    public void onTabUnselected(Tab tab, android.app.FragmentTransaction ft) {
         // TODO Auto-generated method stub
 
     }
@@ -143,6 +145,7 @@ public class PageListActivity extends FragmentActivity implements PageListFragme
 
     @Override
     public void onPageSelected(int arg0) {
-        getActionBar().setSelectedNavigationItem(arg0);
+        if (!mTwoPane)
+            getActionBar().setSelectedNavigationItem(arg0);
     }
 }

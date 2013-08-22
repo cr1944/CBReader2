@@ -8,5 +8,11 @@
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- API 14 theme customizations can go here. -->
     </style>
+    <style name="HomePaneHeader">
+       <item name="android:textSize">@dimen/text_size_medium</item>
+       <item name="android:textStyle">bold</item>
+       <item name="android:textAllCaps">true</item>
+       <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
 
 </resources>

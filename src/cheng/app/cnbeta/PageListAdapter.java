@@ -45,37 +45,54 @@ public class PageListAdapter extends CursorAdapter {
     }
 
     private void bindNewsListView(View arg0, Context arg1, Cursor arg2) {
+        NewsViewHolder holder = null;
+        Object tag = arg0.getTag();
+        if (tag instanceof NewsViewHolder) {
+            holder = (NewsViewHolder) tag;
+        }
+        if (holder == null) {
+            holder = new NewsViewHolder();
+            arg0.setTag(holder);
+            holder.title = (TextView) arg0.findViewById(R.id.page_list_title);
+            holder.time = (TextView) arg0.findViewById(R.id.page_list_time);
+            holder.comment = (TextView) arg0.findViewById(R.id.page_list_comment);
+            holder.text = (TextView) arg0.findViewById(R.id.page_list_text);
+            holder.icon = (ImageView) arg0.findViewById(R.id.page_list_image);
+        }
         final String title = arg2.getString(arg2.getColumnIndex(NewsColumns.TITLE));
         final String time = arg2.getString(arg2.getColumnIndex(NewsColumns.PUBTIME));
         final int cmtClosed = arg2.getInt(arg2.getColumnIndex(NewsColumns.CMT_CLOSED));
         final int cmtNumber = arg2.getInt(arg2.getColumnIndex(NewsColumns.CMT_NUMBER));
         final String logo = arg2.getString(arg2.getColumnIndex(NewsColumns.TOPIC_LOGO));
         final String text = HttpUtil.unescape(arg2.getString(arg2.getColumnIndex(NewsColumns.SUMMARY)));
-        final TextView titleView = (TextView) arg0.findViewById(R.id.page_list_title);
-        final TextView timeView = (TextView) arg0.findViewById(R.id.page_list_time);
-        final TextView commentView = (TextView) arg0.findViewById(R.id.page_list_comment);
-        final TextView textView = (TextView) arg0.findViewById(R.id.page_list_text);
-        final ImageView imageView = (ImageView) arg0.findViewById(R.id.page_list_image);
-        titleView.setText(title);
-        timeView.setText(TimeUtil.formatTime(mContext, time));
+        holder.title.setText(title);
+        holder.time.setText(TimeUtil.formatTime(mContext, time));
         if (cmtClosed == 0) {
-            commentView.setText(mContext.getString(R.string.cmt_number, cmtNumber));
+            holder.comment.setText(mContext.getString(R.string.cmt_number, cmtNumber));
         } else {
-            commentView.setText(R.string.cmt_closed);
+            holder.comment.setText(R.string.cmt_closed);
         }
-        textView.setText(Html.fromHtml(text));
+        holder.text.setText(Html.fromHtml(text));
         Picasso.with(mContext)
         .load(logo)
         .placeholder(R.drawable.ic_launcher)
-        .into(imageView);
+        .into(holder.icon);
     }
 
     @Override
     public View newView(Context arg0, Cursor arg1, ViewGroup arg2) {
-        if (mPageId == PageListFragment.PAGE_HM)
+        if (mPageId == PageListFragment.PAGE_HM) {
             return LayoutInflater.from(arg0).inflate(R.layout.page_list_item_hm, arg2, false);
-        else
+        } else {
             return LayoutInflater.from(arg0).inflate(R.layout.page_list_item, arg2, false);
+        }
     }
 
+    static class NewsViewHolder {
+        TextView title;
+        TextView time;
+        TextView comment;
+        TextView text;
+        ImageView icon;
+    }
 }
