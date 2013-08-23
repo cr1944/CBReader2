@@ -2,49 +2,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:baselineAligned="false"
-    android:orientation="horizontal"
-    android:padding="@dimen/multipane_half_padding" >
+    android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical" >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/multipane_half_padding" >
 
         <TextView
             style="@style/HomePaneHeader"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/multipane_half_padding"
             android:layout_marginTop="@dimen/multipane_half_padding"
+            android:layout_weight="1"
             android:text="@string/page_title_news" />
 
-        <FrameLayout android:id="@+id/fragment_news_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/multipane_half_padding"
-            android:background="@drawable/grey_frame" >
-        </FrameLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical" >
-
         <TextView
             style="@style/HomePaneHeader"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/multipane_half_padding"
             android:layout_marginTop="@dimen/multipane_half_padding"
+            android:layout_weight="1"
             android:text="@string/page_title_comments" />
-
-        <FrameLayout android:id="@+id/fragment_hot_comments"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/multipane_half_padding"
-            android:background="@drawable/grey_frame" >
-        </FrameLayout>
     </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/list_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </android.support.v4.view.ViewPager>
+
 </LinearLayout>

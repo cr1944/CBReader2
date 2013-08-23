@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 
 public class PageFragmentAdapter extends FragmentPagerAdapter {
     static final int PAGE_NUMBER = 2;
-    private boolean mShortPageWidth;
+    private float mPageWidth;
 
-    public PageFragmentAdapter(FragmentManager fm, boolean shortPageWidth) {
+    public PageFragmentAdapter(FragmentManager fm, float pageWidth) {
         super(fm);
-        mShortPageWidth = shortPageWidth;
+        mPageWidth = pageWidth;
     }
 
     @Override
@@ -37,6 +37,6 @@ public class PageFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public float getPageWidth(int position) {
-        return mShortPageWidth ? 0.75f : 1.f;
+        return mPageWidth;
     }
 }

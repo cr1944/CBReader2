@@ -8,15 +8,12 @@ import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 
 /**
  * An activity representing a list of Pages. This activity has different
@@ -35,8 +32,6 @@ import android.view.MenuItem;
  */
 public class PageListActivity extends FragmentActivity implements PageListFragment.Callbacks,
         TabListener, OnPageChangeListener {
-    public static final String NEWS_FRAGMENT = "cb_news_fragment";
-    public static final String COMMENTS_FRAGMENT = "cb_comments_fragment";
 
     private boolean mTwoPane;
     private PageFragmentAdapter mPageFragmentAdapter;
@@ -50,18 +45,24 @@ public class PageListActivity extends FragmentActivity implements PageListFragme
         mViewPager = (ViewPager) findViewById(R.id.list_pager);
         mPullToRefreshAttacher = PullToRefreshAttacher.get(this);
 
-        if (mViewPager == null) {
-            mTwoPane = true;
-        }
+        mTwoPane = getResources().getBoolean(R.bool.two_pane);
         boolean shortPageWidth = getResources().getBoolean(R.bool.short_page_width);
         final ActionBar bar = getActionBar();
         bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_SHOW_HOME,
                 ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_HOME_AS_UP);
         final FragmentManager fm = getSupportFragmentManager();
+        float pageWidth = 1.f;
+        if (mTwoPane) {
+            pageWidth = 0.5f;
+        } else if (shortPageWidth) {
+            pageWidth = 0.75f;
+        }
+        mPageFragmentAdapter = new PageFragmentAdapter(fm, pageWidth);
+        mViewPager.setAdapter(mPageFragmentAdapter);
+        mViewPager.setOnPageChangeListener(this);
         if (!mTwoPane) {
-            mPageFragmentAdapter = new PageFragmentAdapter(fm, shortPageWidth);
-            mViewPager.setAdapter(mPageFragmentAdapter);
-            mViewPager.setOnPageChangeListener(this);
+            //mViewPager.setPageMarginDrawable(R.drawable.grey_border_inset_lr);
+            //mViewPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.page_margin_width));
             bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
             bar.addTab(bar.newTab()
                     .setText(R.string.page_title_news)
@@ -69,31 +70,6 @@ public class PageListActivity extends FragmentActivity implements PageListFragme
             bar.addTab(bar.newTab()
                     .setText(R.string.page_title_comments)
                     .setTabListener(this));
-        } else {
-            FragmentTransaction ft = fm.beginTransaction();
-            Fragment f1 = fm.findFragmentByTag(NEWS_FRAGMENT);
-            if (f1 == null) {
-                Bundle arg1 = new Bundle();
-                arg1.putBoolean(PageListFragment.ARG_IS_TWO_PANE, true);
-                arg1.putInt(PageListFragment.ARG_PAGE, 0);
-                f1 = new PageListFragment();
-                f1.setArguments(arg1);
-                ft.add(R.id.fragment_news_list, f1, NEWS_FRAGMENT);
-            } else {
-                ft.attach(f1);
-            }
-            Fragment f2 = fm.findFragmentByTag(COMMENTS_FRAGMENT);
-            if (f2 == null) {
-                Bundle arg2 = new Bundle();
-                arg2.putBoolean(PageListFragment.ARG_IS_TWO_PANE, true);
-                arg2.putInt(PageListFragment.ARG_PAGE, 1);
-                f2 = new PageListFragment();
-                f2.setArguments(arg2);
-                ft.add(R.id.fragment_hot_comments, f2, COMMENTS_FRAGMENT);
-            } else {
-                ft.attach(f2);
-            }
-            ft.commit();
         }
 
         // TODO: If exposing deep links into your app, handle intents here.

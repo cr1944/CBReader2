@@ -7,6 +7,7 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefres
 import cheng.app.cnbeta.util.Configs;
 import cheng.app.cnbeta.util.HttpUtil;
 import cheng.app.cnbeta.util.JSONUtil;
+
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -24,6 +25,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ListView;
 
 /**
@@ -151,13 +154,15 @@ public class PageListFragment extends ListFragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v =  super.onCreateView(inflater, container, savedInstanceState);
-        return v;
+        v.setBackgroundResource(R.drawable.grey_frame);
+        FrameLayout root = (FrameLayout) inflater.inflate(R.layout.list_container, null);
+        root.addView(v);
+        return root;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
     }
 
     @Override
