@@ -4,10 +4,11 @@ import java.lang.ref.WeakReference;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener;
+import cheng.app.cnbeta.data.CBContract.HmColumns;
+import cheng.app.cnbeta.data.CBContract.NewsColumns;
 import cheng.app.cnbeta.util.Configs;
 import cheng.app.cnbeta.util.HttpUtil;
 import cheng.app.cnbeta.util.JSONUtil;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -25,8 +26,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
 import android.widget.ListView;
 
 /**
@@ -39,7 +41,7 @@ import android.widget.ListView;
  * interface.
  */
 public class PageListFragment extends ListFragment implements
-    LoaderManager.LoaderCallbacks<Cursor>, OnClickListener, OnRefreshListener {
+    LoaderManager.LoaderCallbacks<Cursor>, OnClickListener, OnRefreshListener, OnScrollListener {
     private static final String TAG = "PageListFragment";
 
     /**
@@ -69,6 +71,7 @@ public class PageListFragment extends ListFragment implements
     private PullToRefreshAttacher mPullToRefreshAttacher;
     private Menu mOptionsMenu;
     private int mPageId;
+    private View mFooterView;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -154,7 +157,7 @@ public class PageListFragment extends ListFragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v =  super.onCreateView(inflater, container, savedInstanceState);
-        v.setBackgroundResource(R.drawable.grey_frame);
+        mFooterView = inflater.inflate(R.layout.list_loading_layout, null);
         FrameLayout root = (FrameLayout) inflater.inflate(R.layout.list_container, null);
         root.addView(v);
         return root;
@@ -163,6 +166,36 @@ public class PageListFragment extends ListFragment implements
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ListView lv = getListView();
+        lv.addFooterView(mFooterView, null, false);
+        lv.setDrawSelectorOnTop(true);
+        lv.setDivider(view.getResources().getDrawable(android.R.color.transparent));
+        lv.setDividerHeight(view.getResources().getDimensionPixelSize(R.dimen.multipane_padding));
+        lv.setOnScrollListener(this);
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+            int totalItemCount) {
+        boolean loadMore = /* maybe add a padding */
+                firstVisibleItem + visibleItemCount >= totalItemCount;
+
+            if(loadMore) {
+                Object o = mAdapter.getItem(mAdapter.getCount() - 1);
+                if (o != null) {
+                    @SuppressWarnings("resource")
+                    Cursor c = (Cursor) o;
+                    if (mPageId == PAGE_HM)
+                        refresh(c.getLong(c.getColumnIndex(HmColumns.HMID)));
+                    else
+                        refresh(c.getLong(c.getColumnIndex(NewsColumns.ARTICLE_ID)));
+                }
+            }
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        // TODO Auto-generated method stub
     }
 
     @Override

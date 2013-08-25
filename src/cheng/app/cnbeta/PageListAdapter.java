@@ -75,6 +75,7 @@ public class PageListAdapter extends CursorAdapter {
         holder.text.setText(Html.fromHtml(text));
         Picasso.with(mContext)
         .load(logo)
+        .fit()
         .placeholder(R.drawable.ic_launcher)
         .into(holder.icon);
     }

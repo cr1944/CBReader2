@@ -14,8 +14,6 @@
             style="@style/HomePaneHeader"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/multipane_half_padding"
-            android:layout_marginTop="@dimen/multipane_half_padding"
             android:layout_weight="1"
             android:text="@string/page_title_news" />
 
@@ -24,7 +22,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/multipane_half_padding"
-            android:layout_marginTop="@dimen/multipane_half_padding"
             android:layout_weight="1"
             android:text="@string/page_title_comments" />
     </LinearLayout>

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import cheng.app.cnbeta.data.CBContract.HmColumns;
 import cheng.app.cnbeta.data.CBContract.NewsColumns;
 import cheng.app.cnbeta.data.CBSQLiteHelper.TABLES;
+import cheng.app.cnbeta.util.Configs;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -150,6 +151,7 @@ public class CBProvider extends ContentProvider {
         if (DEBUG) Log.v(TAG, "query uri - " + arg0);
         final SQLiteDatabase db = mDbHelper.getReadableDatabase();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        String limit = null;
         switch (sUriMatcher.match(arg0)) {
             case NEWS:
                 qb.setTables(TABLES.NEWS_LIST);
@@ -157,6 +159,7 @@ public class CBProvider extends ContentProvider {
                 if (TextUtils.isEmpty(arg4)) {
                     arg4 = NewsColumns.DEFAULT_SORT_ORDER;
                 }
+                limit = "" + Configs.LIMIT;
                 break;
             case NEWS_ID:
                 qb.setTables(TABLES.NEWS_LIST);
@@ -173,6 +176,7 @@ public class CBProvider extends ContentProvider {
                 if (TextUtils.isEmpty(arg4)) {
                     arg4 = HmColumns.DEFAULT_SORT_ORDER;
                 }
+                limit = "" + Configs.LIMIT;
                 break;
             case HM_ID:
                 qb.setTables(TABLES.HM);
@@ -186,7 +190,7 @@ public class CBProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown URL " + arg0);
         }
-        Cursor c = qb.query(db, arg1, arg2, arg3, null, null, arg4, null);
+        Cursor c = qb.query(db, arg1, arg2, arg3, null, null, arg4, limit);
         c.setNotificationUri(getContext().getContentResolver(), arg0);
         return c;
     }

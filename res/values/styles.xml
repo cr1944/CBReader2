@@ -15,6 +15,9 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:windowBackground">@drawable/grey_background_pattern</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowBackground">@drawable/grey_frame</item>
     </style>
     <style name="TextHeader">
         <item name="android:textSize">@dimen/text_size_xlarge</item>
