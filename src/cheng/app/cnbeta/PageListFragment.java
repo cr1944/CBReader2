@@ -17,7 +17,6 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -49,6 +48,7 @@ public class PageListFragment extends ListFragment implements
      * activated item position. Only used on tablets.
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
+    private static final String STATE_LAST_ITEM_ID = "last_item_id";
 
     /**
      * The fragment's current callback object, which is notified of list item
@@ -67,10 +67,12 @@ public class PageListFragment extends ListFragment implements
     private boolean mIsLoading = false;
     public static final String ARG_IS_TWO_PANE = "is_two_pane";
     public static final String ARG_PAGE = "page";
+    public static final String ARG_LAST_ID = "last_id";
     PageListAdapter mAdapter;
     private PullToRefreshAttacher mPullToRefreshAttacher;
     private Menu mOptionsMenu;
     private int mPageId;
+    private long mLastItemId = -1;
     private View mFooterView;
 
     /**
@@ -132,9 +134,13 @@ public class PageListFragment extends ListFragment implements
             setActivateOnItemClick(true);
         }
         // Restore the previously serialized activated item position.
-        if (savedInstanceState != null
-                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
+        if (savedInstanceState != null) {
+            if(savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
+                setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
+            }
+            if(savedInstanceState.containsKey(STATE_LAST_ITEM_ID)) {
+                mLastItemId = savedInstanceState.getLong(STATE_LAST_ITEM_ID);
+            }
         }
         mAdapter = new PageListAdapter(getActivity(), mPageId);
         setListAdapter(mAdapter);
@@ -143,10 +149,13 @@ public class PageListFragment extends ListFragment implements
         setListShown(false);
 
         mIsLoading = true;
-        if (mIsReCreated)
-            getLoaderManager().initLoader(0, null, this);
-        else
-            refresh(-1L);
+        if (mIsReCreated) {
+            Bundle args = new Bundle();
+            args.putLong(ARG_LAST_ID, mLastItemId);
+            getLoaderManager().initLoader(0, args, this);
+        } else {
+            refresh(-1);
+        }
     }
 
     void refresh(long lastId) {
@@ -180,16 +189,8 @@ public class PageListFragment extends ListFragment implements
         boolean loadMore = /* maybe add a padding */
                 firstVisibleItem + visibleItemCount >= totalItemCount;
 
-            if(loadMore) {
-                Object o = mAdapter.getItem(mAdapter.getCount() - 1);
-                if (o != null) {
-                    @SuppressWarnings("resource")
-                    Cursor c = (Cursor) o;
-                    if (mPageId == PAGE_HM)
-                        refresh(c.getLong(c.getColumnIndex(HmColumns.HMID)));
-                    else
-                        refresh(c.getLong(c.getColumnIndex(NewsColumns.ARTICLE_ID)));
-                }
+            if(loadMore && !mIsLoading) {
+                refresh(mLastItemId);
             }
     }
 
@@ -272,6 +273,7 @@ public class PageListFragment extends ListFragment implements
             // Serialize and persist the activated item position.
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
         }
+        outState.putLong(STATE_LAST_ITEM_ID, mLastItemId);
     }
 
     /**
@@ -304,7 +306,12 @@ public class PageListFragment extends ListFragment implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-        PageListLoader cl = new PageListLoader(getActivity(), mPageId);
+        long lastId = -1;
+        if (arg1 != null) {
+            if (arg1.containsKey(ARG_LAST_ID))
+                lastId = arg1.getLong(ARG_LAST_ID);
+        }
+        PageListLoader cl = new PageListLoader(getActivity(), mPageId, lastId);
         cl.setUpdateThrottle(2000); // update at most every 2 seconds.
         return cl;
     }
@@ -312,6 +319,15 @@ public class PageListFragment extends ListFragment implements
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
         mAdapter.swapCursor(arg1);
+        Object o = mAdapter.getItem(mAdapter.getCount() - 1);
+        if (o != null) {
+            Cursor c = (Cursor) o;
+            if (mPageId == PAGE_HM)
+                mLastItemId = c.getLong(c.getColumnIndex(HmColumns.HMID));
+            else
+                mLastItemId = c.getLong(c.getColumnIndex(NewsColumns.ARTICLE_ID));
+            Log.d(TAG, "onLoadFinished, mLastItemId=" + mLastItemId);
+        }
 
         // The list should now be shown.
         if (isResumed()) {
@@ -328,9 +344,10 @@ public class PageListFragment extends ListFragment implements
         mAdapter.swapCursor(null);
     }
 
-    private class PageListAsyncTask extends AsyncTask<Long, Void, Boolean> {
+    private class PageListAsyncTask extends AsyncTask<Long, Void, Long> {
         private WeakReference<PageListFragment> mFragment;
         private ContentResolver mCr;
+        private long mLastId;//this is the last item of the list
 
         public PageListAsyncTask(PageListFragment fragment) {
             mFragment = new WeakReference<PageListFragment>(fragment);
@@ -338,54 +355,51 @@ public class PageListFragment extends ListFragment implements
         }
 
         @Override
-        protected Boolean doInBackground(Long... params) {
+        protected Long doInBackground(Long... params) {
             final PageListFragment fragment = mFragment.get();
-            boolean result = false;
-            long lastId = params[0];
+            mLastId = params[0];
             if (fragment != null) {
                 int pageId = fragment.getPageId();
                 if (pageId == PAGE_HM) {
-                    result = loadHM(lastId);
+                    return loadHM(mLastId);
                 } else {
-                    result = loadNewsList(lastId);
+                    return loadNewsList(mLastId);
                 }
+            } else {
+                return -1L;
             }
-            return result;
         }
 
-        private boolean loadNewsList(long lastId) {
+        private long loadNewsList(long lastId) {
             String url = Configs.NEWSLIST_URL + Configs.LIMIT;
             if (lastId > 0) {
                 url += (Configs.NEWSLIST_PAGE + lastId);
             }
             String html = HttpUtil.getInstance().httpGet(url);
-            if (!TextUtils.isEmpty(html)) {
-                return JSONUtil.parseAndSaveNewsList(html, mCr);
-            }
-            return false;
+            return JSONUtil.parseAndSaveNewsList(html, mCr);
         }
 
-        private boolean loadHM(long lastId) {
+        private long loadHM(long lastId) {
             String url = Configs.HMCOMMENT_URL + Configs.LIMIT;
             if (lastId > 0) {
                 url += (Configs.HMCOMMENT_PAGE + lastId);
             }
             String html = HttpUtil.getInstance().httpGet(url);
-            if (!TextUtils.isEmpty(html)) {
-                return JSONUtil.parseAndSaveHotComments(html, mCr);
-            }
-            return false;
+            return JSONUtil.parseAndSaveHotComments(html, mCr);
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Long result) {
+            Log.d(TAG, "onPostExecute, last id is " + result);
             final PageListFragment fragment = mFragment.get();
             if (fragment != null) {
                 Activity activity = fragment.getActivity();
                 if (activity != null && !activity.isFinishing()) {
                     // Prepare the loader.  Either re-connect with an existing one,
                     // or start a new one.
-                    fragment.getLoaderManager().initLoader(0, null, fragment);
+                    Bundle args = new Bundle();
+                    args.putLong(ARG_LAST_ID, result);
+                    fragment.getLoaderManager().initLoader(0, args, fragment);
                     mPullToRefreshAttacher.setRefreshComplete();
                 }
             }

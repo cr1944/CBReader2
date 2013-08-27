@@ -8,7 +8,6 @@ import cheng.app.cnbeta.data.CBCommentEntry;
 import cheng.app.cnbeta.data.CBContract;
 import cheng.app.cnbeta.data.CBContract.HmColumns;
 import cheng.app.cnbeta.data.CBContract.NewsColumns;
-import cheng.app.cnbeta.data.CBNewsEntry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,15 +19,19 @@ import java.util.LinkedList;
 public class JSONUtil {
     public static final String TAG = "JSONUtil";
 
-    public static boolean parseAndSaveNewsList(String text, ContentResolver cr) {
+    public static long parseAndSaveNewsList(String text, ContentResolver cr) {
+        long articleId = -1;
+        if (!TextUtils.isEmpty(text)) {
+            return articleId;
+        }
         try {
             JSONArray array = new JSONArray(new JSONTokener(text));
             int length = array.length();
-            if (length == 0) return false;
+            if (length == 0) return articleId;
             for (int i = 0; i < length; i++) {
                 JSONObject item = array.getJSONObject(i);
                 ContentValues values = new ContentValues();
-                long articleId = item.optLong("ArticleID");
+                articleId = item.optLong("ArticleID");
                 values.put(NewsColumns.ARTICLE_ID, articleId);
                 values.put(NewsColumns.TITLE, item.optString("title"));
                 values.put(NewsColumns.PUBTIME, item.optString("pubtime"));
@@ -41,18 +44,21 @@ public class JSONUtil {
                 if (row < 1)
                     cr.insert(CBContract.NEWS_CONTENT_URI, values);
             }
-            return true;
         } catch (JSONException e) {
             e.printStackTrace();
-            return false;
         }
+        return articleId;
     }
 
-    public static boolean parseAndSaveHotComments(String text, ContentResolver cr) {
+    public static long parseAndSaveHotComments(String text, ContentResolver cr) {
+        long hmid = -1;
+        if (!TextUtils.isEmpty(text)) {
+            return hmid;
+        }
         try {
             JSONArray array = new JSONArray(new JSONTokener(text));
             int length = array.length();
-            if (length == 0) return false;
+            if (length == 0) return hmid;
             for (int i = 0; i < length; i++) {
                 JSONObject item = array.getJSONObject(i);
                 ContentValues values = new ContentValues();
@@ -60,7 +66,7 @@ public class JSONUtil {
                 values.put(HmColumns.COMMENT, item.optString("comment"));
                 values.put(HmColumns.TITLE, item.optString("title"));
                 values.put(HmColumns.NAME, item.optString("name"));
-                long hmid = item.optLong("HMID");
+                hmid = item.optLong("HMID");
                 values.put(HmColumns.HMID, hmid);
                 values.put(HmColumns.CMT_CLOSED, item.optInt("cmtClosed"));
                 values.put(HmColumns.CMT_NUMBER, item.optInt("cmtnum"));
@@ -68,11 +74,10 @@ public class JSONUtil {
                 if (row < 1)
                     cr.insert(CBContract.HM_CONTENT_URI, values);
             }
-            return true;
         } catch (JSONException e) {
             e.printStackTrace();
-            return false;
         }
+        return hmid;
     }
 
     public static LinkedList<CBCommentEntry> parseComments(long newsId, String title, String text) {

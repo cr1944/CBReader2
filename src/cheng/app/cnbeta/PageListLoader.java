@@ -14,7 +14,7 @@ import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
 
 public class PageListLoader extends AsyncTaskLoader<Cursor> {
-    private long mLastId = -1;
+    private long mLastId = -1;//this is the last news id to load
     private int mPageId;
     final ForceLoadContentObserver mObserver;
 
@@ -32,7 +32,7 @@ public class PageListLoader extends AsyncTaskLoader<Cursor> {
         if (mPageId == PageListFragment.PAGE_HM) {
             mUri = CBContract.HM_CONTENT_URI;
             if (mLastId > 0) {
-                mSelection = HmColumns.HMID + " < ?" + mLastId;
+                mSelection = HmColumns.HMID + " >= ?" + mLastId;
                 mSelectionArgs = new String[] {String.valueOf(mLastId)};
             } else {
                 mSelection = null;
@@ -41,7 +41,7 @@ public class PageListLoader extends AsyncTaskLoader<Cursor> {
         } else {
             mUri = CBContract.NEWS_CONTENT_URI;
             if (mLastId > 0) {
-                mSelection = NewsColumns.ARTICLE_ID + " < ?" + mLastId;
+                mSelection = NewsColumns.ARTICLE_ID + " >= ?" + mLastId;
                 mSelectionArgs = new String[] {String.valueOf(mLastId)};
             } else {
                 mSelection = null;
@@ -88,14 +88,14 @@ public class PageListLoader extends AsyncTaskLoader<Cursor> {
         }
     }
 
-    public PageListLoader(Context context, int pageId) {
+    public PageListLoader(Context context, int pageId, long lastId) {
         super(context);
         mObserver = new ForceLoadContentObserver();
         mProjection = null;
         mSelection = null;
         mSelectionArgs = null;
         mSortOrder = NewsColumns.DEFAULT_SORT_ORDER;
-        mLastId = -1;
+        mLastId = lastId;
         mPageId = pageId;
     }
 
@@ -143,10 +143,6 @@ public class PageListLoader extends AsyncTaskLoader<Cursor> {
             mCursor.close();
         }
         mCursor = null;
-    }
-
-    public void setLastId(long lastId) {
-        mLastId = lastId;
     }
 
     @Override

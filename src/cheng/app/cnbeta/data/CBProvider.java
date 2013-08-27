@@ -159,7 +159,6 @@ public class CBProvider extends ContentProvider {
                 if (TextUtils.isEmpty(arg4)) {
                     arg4 = NewsColumns.DEFAULT_SORT_ORDER;
                 }
-                limit = "" + Configs.LIMIT;
                 break;
             case NEWS_ID:
                 qb.setTables(TABLES.NEWS_LIST);
@@ -176,7 +175,6 @@ public class CBProvider extends ContentProvider {
                 if (TextUtils.isEmpty(arg4)) {
                     arg4 = HmColumns.DEFAULT_SORT_ORDER;
                 }
-                limit = "" + Configs.LIMIT;
                 break;
             case HM_ID:
                 qb.setTables(TABLES.HM);
