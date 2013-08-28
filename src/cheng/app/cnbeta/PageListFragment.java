@@ -6,14 +6,20 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener;
 import cheng.app.cnbeta.data.CBContract.HmColumns;
 import cheng.app.cnbeta.data.CBContract.NewsColumns;
+import cheng.app.cnbeta.lib.EndlessAdapter;
 import cheng.app.cnbeta.util.Configs;
 import cheng.app.cnbeta.util.HttpUtil;
 import cheng.app.cnbeta.util.JSONUtil;
+
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Handler.Callback;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -24,9 +30,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
@@ -40,7 +43,7 @@ import android.widget.ListView;
  * interface.
  */
 public class PageListFragment extends ListFragment implements
-    LoaderManager.LoaderCallbacks<Cursor>, OnClickListener, OnRefreshListener, OnScrollListener {
+    LoaderManager.LoaderCallbacks<Cursor>, OnRefreshListener, Callback {
     private static final String TAG = "PageListFragment";
 
     /**
@@ -68,12 +71,12 @@ public class PageListFragment extends ListFragment implements
     public static final String ARG_IS_TWO_PANE = "is_two_pane";
     public static final String ARG_PAGE = "page";
     public static final String ARG_LAST_ID = "last_id";
-    PageListAdapter mAdapter;
+    AutoLoadAdapter mAdapter;
     private PullToRefreshAttacher mPullToRefreshAttacher;
     private Menu mOptionsMenu;
     private int mPageId;
     private long mLastItemId = -1;
-    private View mFooterView;
+    Handler mHandler;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -113,6 +116,7 @@ public class PageListFragment extends ListFragment implements
         super.onCreate(savedInstanceState);
 
         mIsReCreated = savedInstanceState != null;
+        mHandler = new Handler(this);
         setHasOptionsMenu(true);
     }
 
@@ -142,14 +146,15 @@ public class PageListFragment extends ListFragment implements
                 mLastItemId = savedInstanceState.getLong(STATE_LAST_ITEM_ID);
             }
         }
-        mAdapter = new PageListAdapter(getActivity(), mPageId);
+        mAdapter = new AutoLoadAdapter(getActivity(), new PageListAdapter(getActivity(), mPageId));
+        mAdapter.setRunInBackground(false);
         setListAdapter(mAdapter);
 
         // Start out with a progress indicator.
         setListShown(false);
 
-        mIsLoading = true;
         if (mIsReCreated) {
+            mIsLoading = true;
             Bundle args = new Bundle();
             args.putLong(ARG_LAST_ID, mLastItemId);
             getLoaderManager().initLoader(0, args, this);
@@ -159,14 +164,17 @@ public class PageListFragment extends ListFragment implements
     }
 
     void refresh(long lastId) {
-        triggerRefresh(true);
-        new PageListAsyncTask(this).execute(lastId);
+        if (!mIsLoading) {
+            Log.d(TAG, "[" + mPageId + "]start refresh from net, lastId=" + lastId);
+            new PageListAsyncTask(this).execute(lastId);
+        } else {
+            Log.e(TAG, "[" + mPageId + "]already in loading!");
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v =  super.onCreateView(inflater, container, savedInstanceState);
-        mFooterView = inflater.inflate(R.layout.list_loading_layout, null);
         FrameLayout root = (FrameLayout) inflater.inflate(R.layout.list_container, null);
         root.addView(v);
         return root;
@@ -176,32 +184,13 @@ public class PageListFragment extends ListFragment implements
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ListView lv = getListView();
-        lv.addFooterView(mFooterView, null, false);
         lv.setDrawSelectorOnTop(true);
         lv.setDivider(view.getResources().getDrawable(android.R.color.transparent));
         lv.setDividerHeight(view.getResources().getDimensionPixelSize(R.dimen.multipane_padding));
-        lv.setOnScrollListener(this);
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
-            int totalItemCount) {
-        boolean loadMore = /* maybe add a padding */
-                firstVisibleItem + visibleItemCount >= totalItemCount;
-
-            if(loadMore && !mIsLoading) {
-                refresh(mLastItemId);
-            }
-    }
-
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.e(TAG, "onCreateOptionsMenu");
         //inflater.inflate(R.menu.main_refresh_action, menu);
         mOptionsMenu = menu;
         triggerRefresh(mIsLoading);
@@ -299,12 +288,6 @@ public class PageListFragment extends ListFragment implements
     }
 
     @Override
-    public void onClick(View arg0) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
         long lastId = -1;
         if (arg1 != null) {
@@ -318,15 +301,13 @@ public class PageListFragment extends ListFragment implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-        mAdapter.swapCursor(arg1);
-        Object o = mAdapter.getItem(mAdapter.getCount() - 1);
-        if (o != null) {
-            Cursor c = (Cursor) o;
+        mAdapter.changeData(arg1);
+        if (arg1 != null && arg1.moveToLast()) {
             if (mPageId == PAGE_HM)
-                mLastItemId = c.getLong(c.getColumnIndex(HmColumns.HMID));
+                mLastItemId = arg1.getLong(arg1.getColumnIndex(HmColumns.HMID));
             else
-                mLastItemId = c.getLong(c.getColumnIndex(NewsColumns.ARTICLE_ID));
-            Log.d(TAG, "onLoadFinished, mLastItemId=" + mLastItemId);
+                mLastItemId = arg1.getLong(arg1.getColumnIndex(NewsColumns.ARTICLE_ID));
+            Log.d(TAG, "[" + mPageId + "]onLoadFinished, mLastItemId=" + mLastItemId);
         }
 
         // The list should now be shown.
@@ -337,17 +318,27 @@ public class PageListFragment extends ListFragment implements
         }
         mIsLoading = false;
         triggerRefresh(false);
+        mPullToRefreshAttacher.setRefreshComplete();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> arg0) {
-        mAdapter.swapCursor(null);
+        mAdapter.changeData(null);
     }
 
-    private class PageListAsyncTask extends AsyncTask<Long, Void, Long> {
+    private static class PageListAsyncTask extends AsyncTask<Long, Void, Long> {
         private WeakReference<PageListFragment> mFragment;
         private ContentResolver mCr;
         private long mLastId;//this is the last item of the list
+
+        @Override
+        protected void onPreExecute() {
+            final PageListFragment fragment = mFragment.get();
+            if (fragment != null) {
+                fragment.mIsLoading = true;
+                fragment.triggerRefresh(true);
+            }
+        }
 
         public PageListAsyncTask(PageListFragment fragment) {
             mFragment = new WeakReference<PageListFragment>(fragment);
@@ -390,9 +381,9 @@ public class PageListFragment extends ListFragment implements
 
         @Override
         protected void onPostExecute(Long result) {
-            Log.d(TAG, "onPostExecute, last id is " + result);
             final PageListFragment fragment = mFragment.get();
             if (fragment != null) {
+                Log.d(TAG, "[" + fragment.getPageId() + "]onPostExecute, last saved id is " + result);
                 Activity activity = fragment.getActivity();
                 if (activity != null && !activity.isFinishing()) {
                     // Prepare the loader.  Either re-connect with an existing one,
@@ -400,9 +391,49 @@ public class PageListFragment extends ListFragment implements
                     Bundle args = new Bundle();
                     args.putLong(ARG_LAST_ID, result);
                     fragment.getLoaderManager().initLoader(0, args, fragment);
-                    mPullToRefreshAttacher.setRefreshComplete();
                 }
             }
         }
+    }
+
+    class AutoLoadAdapter extends EndlessAdapter {
+        Context mContext;
+        PageListAdapter mAdapter;
+
+        public AutoLoadAdapter(Context c, PageListAdapter wrapped) {
+            super(wrapped);
+            mContext = c;
+            mAdapter = wrapped;
+        }
+
+        @Override
+        protected View getPendingView(ViewGroup parent) {
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            View v = inflater.inflate(R.layout.list_loading_layout, null);
+            return v;
+        }
+
+        @Override
+        protected boolean cacheInBackground() throws Exception {
+            Log.d(TAG, "start cacheInBackground");
+            refresh(mLastItemId);
+            return true;
+        }
+
+        @Override
+        protected void appendCachedData() {
+            // TODO Auto-generated method stub
+        }
+
+        public void changeData(Cursor c) {
+            mAdapter.swapCursor(c);
+            onDataReady();
+        }
+    }
+
+    @Override
+    public boolean handleMessage(Message msg) {
+        refresh(mLastItemId);
+        return true;
     }
 }

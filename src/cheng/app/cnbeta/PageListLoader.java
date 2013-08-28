@@ -7,6 +7,8 @@ import java.util.Arrays;
 import cheng.app.cnbeta.data.CBContract;
 import cheng.app.cnbeta.data.CBContract.HmColumns;
 import cheng.app.cnbeta.data.CBContract.NewsColumns;
+import cheng.app.cnbeta.util.Configs;
+
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -30,20 +32,22 @@ public class PageListLoader extends AsyncTaskLoader<Cursor> {
     @Override
     public Cursor loadInBackground() {
         if (mPageId == PageListFragment.PAGE_HM) {
-            mUri = CBContract.HM_CONTENT_URI;
             if (mLastId > 0) {
-                mSelection = HmColumns.HMID + " >= ?" + mLastId;
+                mUri = CBContract.HM_CONTENT_URI;
+                mSelection = HmColumns.HMID + " >= ?";
                 mSelectionArgs = new String[] {String.valueOf(mLastId)};
             } else {
+                mUri = Uri.withAppendedPath(CBContract.HM_CONTENT_URI, "/limit/" + Configs.LIMIT);
                 mSelection = null;
                 mSelectionArgs = null;
             }
         } else {
-            mUri = CBContract.NEWS_CONTENT_URI;
             if (mLastId > 0) {
-                mSelection = NewsColumns.ARTICLE_ID + " >= ?" + mLastId;
+                mUri = CBContract.NEWS_CONTENT_URI;
+                mSelection = NewsColumns.ARTICLE_ID + " >= ?";
                 mSelectionArgs = new String[] {String.valueOf(mLastId)};
             } else {
+                mUri = Uri.withAppendedPath(CBContract.NEWS_CONTENT_URI, "/limit/" + Configs.LIMIT);
                 mSelection = null;
                 mSelectionArgs = null;
             }

@@ -21,7 +21,7 @@ public class JSONUtil {
 
     public static long parseAndSaveNewsList(String text, ContentResolver cr) {
         long articleId = -1;
-        if (!TextUtils.isEmpty(text)) {
+        if (TextUtils.isEmpty(text)) {
             return articleId;
         }
         try {
@@ -52,7 +52,7 @@ public class JSONUtil {
 
     public static long parseAndSaveHotComments(String text, ContentResolver cr) {
         long hmid = -1;
-        if (!TextUtils.isEmpty(text)) {
+        if (TextUtils.isEmpty(text)) {
             return hmid;
         }
         try {

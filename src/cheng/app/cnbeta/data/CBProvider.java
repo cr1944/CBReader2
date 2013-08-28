@@ -5,7 +5,6 @@ import java.util.HashMap;
 import cheng.app.cnbeta.data.CBContract.HmColumns;
 import cheng.app.cnbeta.data.CBContract.NewsColumns;
 import cheng.app.cnbeta.data.CBSQLiteHelper.TABLES;
-import cheng.app.cnbeta.util.Configs;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -24,16 +23,20 @@ public class CBProvider extends ContentProvider {
     private static final boolean DEBUG = true;
 
     private static final int NEWS = 1;
-    private static final int NEWS_ID = 2;
-    private static final int HM =3;
-    private static final int HM_ID = 4;
+    private static final int NEWS_LIMIT = 2;
+    private static final int NEWS_ID = 3;
+    private static final int HM =100;
+    private static final int HM_LIMIT =101;
+    private static final int HM_ID = 102;
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private static final HashMap<String, String> sNewsProjectionMap;
     private static final HashMap<String, String> sHMsProjectionMap;
     static {
         sUriMatcher.addURI(CBContract.AUTHORITY, "news", NEWS);
+        sUriMatcher.addURI(CBContract.AUTHORITY, "news/limit/*", NEWS_LIMIT);
         sUriMatcher.addURI(CBContract.AUTHORITY, "news/#", NEWS_ID);
         sUriMatcher.addURI(CBContract.AUTHORITY, "hm", HM);
+        sUriMatcher.addURI(CBContract.AUTHORITY, "hm/limit/*", HM_LIMIT);
         sUriMatcher.addURI(CBContract.AUTHORITY, "hm/#", HM_ID);
         sNewsProjectionMap = new HashMap<String, String>();
         sNewsProjectionMap.put(NewsColumns._ID, NewsColumns._ID);
@@ -160,6 +163,18 @@ public class CBProvider extends ContentProvider {
                     arg4 = NewsColumns.DEFAULT_SORT_ORDER;
                 }
                 break;
+            case NEWS_LIMIT:
+                qb.setTables(TABLES.NEWS_LIST);
+                qb.setProjectionMap(sNewsProjectionMap);
+                if (TextUtils.isEmpty(arg4)) {
+                    arg4 = NewsColumns.DEFAULT_SORT_ORDER;
+                }
+                try {
+                    limit = arg0.getPathSegments().get(2);
+                } catch (NumberFormatException e) {
+                    Log.e(TAG, "can't parse limit, will query with no limit.");
+                }
+                break;
             case NEWS_ID:
                 qb.setTables(TABLES.NEWS_LIST);
                 arg3 = insertSelectionArg(arg3, arg0.getLastPathSegment());
@@ -174,6 +189,18 @@ public class CBProvider extends ContentProvider {
                 qb.setProjectionMap(sHMsProjectionMap);
                 if (TextUtils.isEmpty(arg4)) {
                     arg4 = HmColumns.DEFAULT_SORT_ORDER;
+                }
+                break;
+            case HM_LIMIT:
+                qb.setTables(TABLES.HM);
+                qb.setProjectionMap(sHMsProjectionMap);
+                if (TextUtils.isEmpty(arg4)) {
+                    arg4 = HmColumns.DEFAULT_SORT_ORDER;
+                }
+                try {
+                    limit = arg0.getPathSegments().get(2);
+                } catch (NumberFormatException e) {
+                    Log.e(TAG, "can't parse limit, will query with no limit.");
                 }
                 break;
             case HM_ID:
