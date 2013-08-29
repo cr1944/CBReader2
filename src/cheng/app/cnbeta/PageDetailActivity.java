@@ -38,8 +38,10 @@ public class PageDetailActivity extends FragmentActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(PageDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(PageDetailFragment.ARG_ITEM_ID));
+            arguments.putLong(PageDetailFragment.ARG_ITEM_ID,
+                    getIntent().getLongExtra(PageDetailFragment.ARG_ITEM_ID, -1));
+            arguments.putInt(PageDetailFragment.ARG_PAGE_ID,
+                    getIntent().getIntExtra(PageDetailFragment.ARG_PAGE_ID, PageListFragment.PAGE_NEWS));
             PageDetailFragment fragment = new PageDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">CBReader</string>
-    <string name="title_page_detail">Page Detail</string>
+    <string name="title_page_detail">资讯详情</string>
     <string name="page_title_news">News</string>
     <string name="page_title_comments">Hot Comments</string>
     <string name="action_downloads">Downloads</string>
@@ -11,5 +11,4 @@
     <string name="action_abouts">Abouts</string>
     <string name="cmt_number"><xliff:g>%d</xliff:g>条评论</string>
     <string name="cmt_closed">评论已关闭</string>
-    
 </resources>

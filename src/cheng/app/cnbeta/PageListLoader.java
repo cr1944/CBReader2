@@ -37,7 +37,7 @@ public class PageListLoader extends AsyncTaskLoader<Cursor> {
                 mSelection = HmColumns.HMID + " >= ?";
                 mSelectionArgs = new String[] {String.valueOf(mLastId)};
             } else {
-                mUri = Uri.withAppendedPath(CBContract.HM_CONTENT_URI, "/limit/" + Configs.LIMIT);
+                mUri = Uri.withAppendedPath(CBContract.HM_CONTENT_URI, "limit/" + Configs.LIMIT);
                 mSelection = null;
                 mSelectionArgs = null;
             }
@@ -47,7 +47,7 @@ public class PageListLoader extends AsyncTaskLoader<Cursor> {
                 mSelection = NewsColumns.ARTICLE_ID + " >= ?";
                 mSelectionArgs = new String[] {String.valueOf(mLastId)};
             } else {
-                mUri = Uri.withAppendedPath(CBContract.NEWS_CONTENT_URI, "/limit/" + Configs.LIMIT);
+                mUri = Uri.withAppendedPath(CBContract.NEWS_CONTENT_URI, "limit/" + Configs.LIMIT);
                 mSelection = null;
                 mSelectionArgs = null;
             }

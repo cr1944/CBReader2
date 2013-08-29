@@ -10,5 +10,5 @@
     <dimen name="logo_padding">6dp</dimen>
     <dimen name="multipane_half_padding">8dp</dimen>
     <dimen name="multipane_padding">16dp</dimen>
-    <dimen name="page_margin_width">16dp</dimen>
+    <dimen name="page_item_padding">8dp</dimen>
 </resources>

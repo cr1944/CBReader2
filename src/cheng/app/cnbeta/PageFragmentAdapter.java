@@ -19,7 +19,6 @@ public class PageFragmentAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int arg0) {
         PageListFragment f = new PageListFragment();
         Bundle arguments = new Bundle();
-        arguments.putBoolean(PageListFragment.ARG_IS_TWO_PANE, false);
         arguments.putInt(PageListFragment.ARG_PAGE, arg0);
         f.setArguments(arguments);
         return f;

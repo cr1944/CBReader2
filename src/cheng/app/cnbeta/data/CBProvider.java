@@ -60,7 +60,7 @@ public class CBProvider extends ContentProvider {
         sHMsProjectionMap.put(HmColumns.CMT_NUMBER, HmColumns.CMT_NUMBER);
     }
     private static final String SQL_WHERE_NEWS_ID = TABLES.NEWS_LIST + "." + NewsColumns.ARTICLE_ID + "=?";
-    private static final String SQL_WHERE_HM_ID = TABLES.HM + "." + HmColumns.ARTICLE_ID + "=?";
+    private static final String SQL_WHERE_HM_ID = TABLES.HM + "." + HmColumns.HMID + "=?";
     private CBSQLiteHelper mDbHelper;
 
     @Override

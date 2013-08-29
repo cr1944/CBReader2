@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?windowBackground"
+    android:padding="@dimen/page_item_padding"
     android:orientation="vertical" >
 
     <TextView

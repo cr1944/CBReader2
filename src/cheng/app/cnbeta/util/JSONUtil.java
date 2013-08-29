@@ -4,6 +4,8 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
+
 import cheng.app.cnbeta.data.CBCommentEntry;
 import cheng.app.cnbeta.data.CBContract;
 import cheng.app.cnbeta.data.CBContract.HmColumns;
@@ -44,6 +46,7 @@ public class JSONUtil {
                 if (row < 1)
                     cr.insert(CBContract.NEWS_CONTENT_URI, values);
             }
+            Log.d(TAG, "parseAndSaveNewsList, length=" + length);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -74,6 +77,7 @@ public class JSONUtil {
                 if (row < 1)
                     cr.insert(CBContract.HM_CONTENT_URI, values);
             }
+            Log.d(TAG, "parseAndSaveHotComments, length=" + length);
         } catch (JSONException e) {
             e.printStackTrace();
         }

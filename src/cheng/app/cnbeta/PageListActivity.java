@@ -84,11 +84,13 @@ public class PageListActivity extends FragmentActivity implements PageListFragme
      * the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String id) {
+    public void onItemSelected(int pageId, long id) {
         Intent detailIntent = new Intent(this, PageDetailActivity.class);
+        detailIntent.putExtra(PageDetailFragment.ARG_PAGE_ID, pageId);
         detailIntent.putExtra(PageDetailFragment.ARG_ITEM_ID, id);
         startActivity(detailIntent);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);

@@ -17,9 +17,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Handler.Callback;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -43,14 +40,9 @@ import android.widget.ListView;
  * interface.
  */
 public class PageListFragment extends ListFragment implements
-    LoaderManager.LoaderCallbacks<Cursor>, OnRefreshListener, Callback {
+    LoaderManager.LoaderCallbacks<Cursor>, OnRefreshListener {
     private static final String TAG = "PageListFragment";
 
-    /**
-     * The serialization (saved instance state) Bundle key representing the
-     * activated item position. Only used on tablets.
-     */
-    private static final String STATE_ACTIVATED_POSITION = "activated_position";
     private static final String STATE_LAST_ITEM_ID = "last_item_id";
 
     /**
@@ -64,11 +56,9 @@ public class PageListFragment extends ListFragment implements
      */
     public static final int PAGE_NEWS = 0;
     public static final int PAGE_HM = 1;
-    private int mActivatedPosition = ListView.INVALID_POSITION;
-    private boolean mTwoPane;
+    //private int mActivatedPosition = ListView.INVALID_POSITION;
     private boolean mIsReCreated = false;
     private boolean mIsLoading = false;
-    public static final String ARG_IS_TWO_PANE = "is_two_pane";
     public static final String ARG_PAGE = "page";
     public static final String ARG_LAST_ID = "last_id";
     AutoLoadAdapter mAdapter;
@@ -76,7 +66,6 @@ public class PageListFragment extends ListFragment implements
     private Menu mOptionsMenu;
     private int mPageId;
     private long mLastItemId = -1;
-    Handler mHandler;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -87,7 +76,7 @@ public class PageListFragment extends ListFragment implements
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String id);
+        public void onItemSelected(int pageId, long id);
     }
 
     /**
@@ -96,7 +85,7 @@ public class PageListFragment extends ListFragment implements
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onItemSelected(int pageId, long id) {
         }
     };
 
@@ -116,7 +105,6 @@ public class PageListFragment extends ListFragment implements
         super.onCreate(savedInstanceState);
 
         mIsReCreated = savedInstanceState != null;
-        mHandler = new Handler(this);
         setHasOptionsMenu(true);
     }
 
@@ -126,22 +114,11 @@ public class PageListFragment extends ListFragment implements
         mPullToRefreshAttacher = ((PageListActivity) getActivity())
                 .getPullToRefreshAttacher();
         mPullToRefreshAttacher.addRefreshableView(getListView(), this);
-        if (getArguments().containsKey(ARG_IS_TWO_PANE)) {
-            mTwoPane = getArguments().getBoolean(ARG_IS_TWO_PANE);
-        }
         if (getArguments().containsKey(ARG_PAGE)) {
             mPageId = getArguments().getInt(ARG_PAGE, PAGE_NEWS);
         }
-        // In two-pane mode, list items should be given the
-        // 'activated' state when touched.
-        if (mTwoPane) {
-            setActivateOnItemClick(true);
-        }
         // Restore the previously serialized activated item position.
         if (savedInstanceState != null) {
-            if(savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-                setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
-            }
             if(savedInstanceState.containsKey(STATE_LAST_ITEM_ID)) {
                 mLastItemId = savedInstanceState.getLong(STATE_LAST_ITEM_ID);
             }
@@ -157,7 +134,7 @@ public class PageListFragment extends ListFragment implements
             mIsLoading = true;
             Bundle args = new Bundle();
             args.putLong(ARG_LAST_ID, mLastItemId);
-            getLoaderManager().initLoader(0, args, this);
+            getLoaderManager().restartLoader(mPageId, args, this);
         } else {
             refresh(-1);
         }
@@ -248,43 +225,20 @@ public class PageListFragment extends ListFragment implements
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
-        super.onListItemClick(listView, view, position, id);
-
-        // Notify the active callbacks interface (the activity, if the
-        // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected("");
+        Cursor c = (Cursor) mAdapter.getItem(position);
+        long itemId = -1;
+        if (mPageId == PAGE_HM) {
+            itemId = c.getLong(c.getColumnIndex(HmColumns.HMID));
+        } else {
+            itemId = c.getLong(c.getColumnIndex(NewsColumns.ARTICLE_ID));
+        }
+        mCallbacks.onItemSelected(mPageId, itemId);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mActivatedPosition != ListView.INVALID_POSITION) {
-            // Serialize and persist the activated item position.
-            outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
-        }
         outState.putLong(STATE_LAST_ITEM_ID, mLastItemId);
-    }
-
-    /**
-     * Turns on activate-on-click mode. When this mode is on, list items will be
-     * given the 'activated' state when touched.
-     */
-    public void setActivateOnItemClick(boolean activateOnItemClick) {
-        // When setting CHOICE_MODE_SINGLE, ListView will automatically
-        // give items the 'activated' state when touched.
-        getListView().setChoiceMode(activateOnItemClick
-                ? ListView.CHOICE_MODE_SINGLE
-                : ListView.CHOICE_MODE_NONE);
-    }
-
-    private void setActivatedPosition(int position) {
-        if (position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
-        } else {
-            getListView().setItemChecked(position, true);
-        }
-
-        mActivatedPosition = position;
     }
 
     @Override
@@ -294,7 +248,8 @@ public class PageListFragment extends ListFragment implements
             if (arg1.containsKey(ARG_LAST_ID))
                 lastId = arg1.getLong(ARG_LAST_ID);
         }
-        PageListLoader cl = new PageListLoader(getActivity(), mPageId, lastId);
+        Log.d(TAG, "[" + arg0 + "]onCreateLoader, lastId=" + lastId);
+        PageListLoader cl = new PageListLoader(getActivity(), arg0, lastId);
         cl.setUpdateThrottle(2000); // update at most every 2 seconds.
         return cl;
     }
@@ -390,7 +345,7 @@ public class PageListFragment extends ListFragment implements
                     // or start a new one.
                     Bundle args = new Bundle();
                     args.putLong(ARG_LAST_ID, result);
-                    fragment.getLoaderManager().initLoader(0, args, fragment);
+                    fragment.getLoaderManager().restartLoader(fragment.mPageId, args, fragment);
                 }
             }
         }
@@ -415,7 +370,7 @@ public class PageListFragment extends ListFragment implements
 
         @Override
         protected boolean cacheInBackground() throws Exception {
-            Log.d(TAG, "start cacheInBackground");
+            Log.i(TAG, "start cacheInBackground");
             refresh(mLastItemId);
             return true;
         }
@@ -429,11 +384,11 @@ public class PageListFragment extends ListFragment implements
             mAdapter.swapCursor(c);
             onDataReady();
         }
+
+        @Override
+        public Object getItem(int position) {
+            return mAdapter.getItem(position);
+        }
     }
 
-    @Override
-    public boolean handleMessage(Message msg) {
-        refresh(mLastItemId);
-        return true;
-    }
 }
