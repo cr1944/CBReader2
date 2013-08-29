@@ -19,6 +19,9 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="windowBackground">@drawable/grey_frame</item>
     </style>
+    <style name="AppTheme.PageDetial">
+        <item name="android:windowActionBarOverlay">true</item>
+    </style>
     <style name="TextHeader">
         <item name="android:textSize">@dimen/text_size_xlarge</item>
         <item name="android:textStyle">bold</item>

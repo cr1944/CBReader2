@@ -11,4 +11,5 @@
     <dimen name="multipane_half_padding">8dp</dimen>
     <dimen name="multipane_padding">16dp</dimen>
     <dimen name="page_item_padding">8dp</dimen>
+    <dimen name="slidingup_panel_height">48dp</dimen>
 </resources>

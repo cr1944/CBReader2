@@ -1,5 +1,8 @@
 package cheng.app.cnbeta;
 
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
+
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,7 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.TextView;
 import cheng.app.cnbeta.data.CBContract;
 import cheng.app.cnbeta.data.CBContract.HmColumns;
 import cheng.app.cnbeta.data.CBContract.NewsColumns;
@@ -33,6 +36,8 @@ public class PageDetailFragment extends Fragment implements LoaderCallbacks<Curs
     private long mItemId = -1;
     private int mPageId = 0;
     private long mNewsId = -1;
+    SlidingUpPanelLayout mSlidingUpPanelLayout;
+    TextView mCommentTitleView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -60,7 +65,39 @@ public class PageDetailFragment extends Fragment implements LoaderCallbacks<Curs
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_page_detail, container, false);
+        mSlidingUpPanelLayout = (SlidingUpPanelLayout) rootView.findViewById(R.id.sliding_layout);
+        mSlidingUpPanelLayout.setPanelHeight(rootView.getResources().getDimensionPixelSize(R.dimen.slidingup_panel_height));
+        mCommentTitleView = (TextView) rootView.findViewById(R.id.page_detail_comments_title);
+        mSlidingUpPanelLayout.setDragView(mCommentTitleView);
+        mSlidingUpPanelLayout.setShadowDrawable(getResources().getDrawable(R.drawable.above_shadow));
+        mSlidingUpPanelLayout.setPanelSlideListener(new PanelSlideListener() {
 
+            @Override
+            public void onPanelCollapsed(View arg0) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onPanelExpanded(View arg0) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                if (slideOffset < 0.2) {
+                    if (getActivity().getActionBar().isShowing()) {
+                        getActivity().getActionBar().hide();
+                    }
+                } else {
+                    if (!getActivity().getActionBar().isShowing()) {
+                        getActivity().getActionBar().show();
+                    }
+                }
+            }
+            
+        });
         return rootView;
     }
     @Override
