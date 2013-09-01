@@ -1,32 +1,32 @@
-<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/sliding_layout"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:paddingTop="?android:attr/actionBarSize" >
 
-    <WebView
-        android:id="@+id/page_detail"
+    <ProgressBar
+        android:id="@android:id/progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
+    <FrameLayout
+        android:id="@+id/listContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp" />
+        android:layout_height="match_parent" >
 
-    <LinearLayout
-        android:id="@+id/page_detail_comments"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#eee"
-        android:orientation="vertical" >
-
-        <TextView android:id="@+id/page_detail_comments_title"
+        <WebView
+            android:id="@+id/page_detail"
             android:layout_width="match_parent"
-            android:layout_height="34dp"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@android:id/empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:textSize="16sp" />
+            android:text="@string/empty_text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </FrameLayout>
 
-        <ListView
-            android:id="@+id/page_detail_comments_list"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-    </LinearLayout>
-
-</com.sothree.slidinguppanel.SlidingUpPanelLayout>
+</FrameLayout>

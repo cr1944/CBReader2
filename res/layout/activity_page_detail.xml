@@ -1,8 +1,33 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/page_detail_container"
+<cheng.app.cnbeta.lib.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".PageDetailActivity"
-    tools:ignore="MergeRootFrame" />
+    android:layout_height="match_parent" >
 
+    <FrameLayout
+        android:id="@+id/page_detail_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/page_detail_comments"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/windowBackground"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/page_detail_comments_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/slidingup_panel_height"
+            android:gravity="center"
+            android:text="@string/display_cmt"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ListView
+            android:id="@+id/page_detail_comments_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+</cheng.app.cnbeta.lib.SlidingUpPanelLayout>

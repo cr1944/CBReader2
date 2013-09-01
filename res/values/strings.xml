@@ -11,4 +11,6 @@
     <string name="action_abouts">Abouts</string>
     <string name="cmt_number"><xliff:g>%d</xliff:g>条评论</string>
     <string name="cmt_closed">评论已关闭</string>
+    <string name="display_cmt">查看评论（<xliff:g example="0">%d</xliff:g>）</string>
+    <string name="empty_text">加载失败，请重试</string>
 </resources>

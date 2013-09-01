@@ -13,10 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<resources>
 
-    <declare-styleable name="BaseTheme">
-        <attr name="listItemBackground" format="reference" />
-    </declare-styleable>
-
-</resources>
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/dark_background_pattern_tile"
+    android:tileMode="repeat" />

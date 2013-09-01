@@ -9,7 +9,7 @@ import cheng.app.cnbeta.data.CBContract.NewsColumns;
 import cheng.app.cnbeta.lib.EndlessAdapter;
 import cheng.app.cnbeta.util.Configs;
 import cheng.app.cnbeta.util.HttpUtil;
-import cheng.app.cnbeta.util.JSONUtil;
+import cheng.app.cnbeta.util.DataUtil;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -322,7 +322,7 @@ public class PageListFragment extends ListFragment implements
                 url += (Configs.NEWSLIST_PAGE + lastId);
             }
             String html = HttpUtil.getInstance().httpGet(url);
-            return JSONUtil.parseAndSaveNewsList(html, mCr);
+            return DataUtil.parseAndSaveNewsList(html, mCr);
         }
 
         private long loadHM(long lastId) {
@@ -331,7 +331,7 @@ public class PageListFragment extends ListFragment implements
                 url += (Configs.HMCOMMENT_PAGE + lastId);
             }
             String html = HttpUtil.getInstance().httpGet(url);
-            return JSONUtil.parseAndSaveHotComments(html, mCr);
+            return DataUtil.parseAndSaveHotComments(html, mCr);
         }
 
         @Override

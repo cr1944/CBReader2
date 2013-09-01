@@ -6,11 +6,14 @@ public class CBContract {
     public static final String AUTHORITY = "cheng.app.cnbeta";
     public static final Uri NEWS_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/news");
     public static final Uri HM_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/hm");
+    public static final Uri CACHE_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/cache");
 
     public static final String NEWS_CONTENT_TYPE = "vnd.android.cursor.dir/cheng.app.cnbeta-news";
     public static final String NEWS_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/cheng.app.cnbeta-news-item";
     public static final String HM_CONTENT_TYPE = "vnd.android.cursor.dir/cheng.app.cnbeta-hm";
     public static final String HM_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/cheng.app.cnbeta-hm-item";
+    public static final String CACHE_CONTENT_TYPE = "vnd.android.cursor.dir/cheng.app.cnbeta-cache";
+    public static final String CACHE_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/cheng.app.cnbeta-cache-item";
 
     public interface NewsColumns {
         public static final String _ID = "_id";
@@ -22,16 +25,7 @@ public class CBContract {
         public static final String SUMMARY = "summary";
         public static final String TOPIC_LOGO = "topic_logo";
         public static final String THEME = "theme";
-        public static final String CACHED = "cached";
         public static final String DEFAULT_SORT_ORDER = ARTICLE_ID + " COLLATE LOCALIZED DESC";
-    }
-    public interface TopColumns {
-        public static final String _ID = "_id";
-        public static final String TITLE = "title";
-        public static final String ARTICLE_ID = "article_id";
-        public static final String CMT_CLOSED = "cmt_closed";
-        public static final String CMT_NUMBER = "cmt_num";
-        public static final String COUNTER = "counter";
     }
     public interface HmColumns {
         public static final String _ID = "_id";
@@ -44,21 +38,11 @@ public class CBContract {
         public static final String CMT_NUMBER = "cmt_num";
         public static final String DEFAULT_SORT_ORDER = HMID + " COLLATE LOCALIZED DESC";
     }
-    public interface Columns {
+    public interface CacheColumns {
         public static final String _ID = "_id";
-        public static final String DATA_ID = "data_id";
-        public static final String DATA_URL = "data_url";
-        public static final String PATH = "path";
-    }
-    public interface AccountColumns {
-        public static final String _ID = "_id";
-        public static final String ACCOUNTTYPE = "type";
-        public static final String USERNAME = "user_name";
-        public static final String USERNICK = "user_nick";
-        public static final String OPENID = "open_id";
-        public static final String OPENKEY = "open_key";
-        public static final String ACCESSTOKEN = "access_token";
-        public static final String EXPIRESIN = "expires_in";
-        public static final String REFRESHTOKEN = "refresh_token";
+        public static final String ARTICLE_ID = "article_id";
+        public static final String TITLE = "data_url";
+        public static final String CMT_NUMBER = "cmt_num";
+        public static final String DEFAULT_SORT_ORDER = ARTICLE_ID + " COLLATE LOCALIZED DESC";
     }
 }
