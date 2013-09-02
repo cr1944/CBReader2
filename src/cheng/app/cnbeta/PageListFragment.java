@@ -183,7 +183,7 @@ public class PageListFragment extends ListFragment implements
         return false;
     }
 
-    void triggerRefresh(boolean refreshing) {
+    private void triggerRefresh(boolean refreshing) {
         if (mOptionsMenu == null) {
             return;
         }

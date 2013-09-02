@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ public class PageDetailActivity extends FragmentActivity implements PanelSlideLi
 
     SlidingUpPanelLayout mSlidingUpPanelLayout;
     TextView mCommentTitleView;
+    private Menu mOptionsMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +85,29 @@ public class PageDetailActivity extends FragmentActivity implements PanelSlideLi
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.detail_activity_actions, menu);
+        mOptionsMenu = menu;
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void triggerRefresh(boolean refreshing) {
+        if (mOptionsMenu == null) {
+            return;
+        }
+
+        final MenuItem refreshItem = mOptionsMenu.findItem(R.id.action_refresh);
+        if (refreshItem != null) {
+            if (refreshing) {
+                refreshItem.setActionView(R.layout.actionbar_indeterminate_progress);
+            } else {
+                refreshItem.setActionView(null);
+            }
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -134,6 +160,11 @@ public class PageDetailActivity extends FragmentActivity implements PanelSlideLi
             if (mCommentTitleView != null)
                 mCommentTitleView.setText(getString(R.string.display_cmt, cmt));
         }
+    }
+
+    @Override
+    public void onUpdateLoading(boolean loading) {
+        triggerRefresh(loading);
     }
 
     @Override

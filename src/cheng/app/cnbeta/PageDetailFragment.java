@@ -16,6 +16,9 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -51,14 +54,20 @@ public class PageDetailFragment extends Fragment implements LoaderCallbacks<Curs
     private TextView mEmptyView;
     private ProgressBar mProgressBar;
     View mContentView;
+    private boolean mLoading;
 
     public interface Callbacks {
         public void onLoaded(int cmt);
+        public void onUpdateLoading(boolean loading);
     }
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
         public void onLoaded(int cmt) {
-            Log.e(TAG, "DummyCallbacks, no activity this fragment attached!");
+            Log.e(TAG, "onLoaded, no activity this fragment attached!");
+        }
+        @Override
+        public void onUpdateLoading(boolean loading) {
+            Log.e(TAG, "onUpdateLoading, no activity this fragment attached!");
         }
     };
 
@@ -82,6 +91,7 @@ public class PageDetailFragment extends Fragment implements LoaderCallbacks<Curs
                 mPageId = args.getInt(ARG_PAGE_ID);
             }
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -114,11 +124,33 @@ public class PageDetailFragment extends Fragment implements LoaderCallbacks<Curs
         s.setDefaultTextEncodingName("utf-8");
         return rootView;
     }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setContentShown(false, true);
+        refresh();
+    }
+
+    private void refresh() {
+        mLoading = true;
+        mCallbacks.onUpdateLoading(true);
         getLoaderManager().restartLoader(100, null, this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        mCallbacks.onUpdateLoading(mLoading);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                refresh();
+                return true;
+        }
+        return false;
     }
 
     private void setContentShown(boolean shown, boolean animate) {
@@ -230,6 +262,8 @@ public class PageDetailFragment extends Fragment implements LoaderCallbacks<Curs
             final PageDetailFragment f = mFragment.get();
             if (f != null) {
                 f.setContentShown(true, true);
+                f.mLoading = false;
+                f.mCallbacks.onUpdateLoading(false);
                 if (!TextUtils.isEmpty(result)) {
                     f.mWebView.loadDataWithBaseURL(null, result, "text/html", "utf-8", null);
                     f.mWebView.setVisibility(View.VISIBLE);
