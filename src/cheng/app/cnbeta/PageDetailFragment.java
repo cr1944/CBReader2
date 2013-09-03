@@ -260,7 +260,7 @@ public class PageDetailFragment extends Fragment implements LoaderCallbacks<Curs
         @Override
         protected void onPostExecute(String result) {
             final PageDetailFragment f = mFragment.get();
-            if (f != null) {
+            if (f != null && f.isResumed()) {
                 f.setContentShown(true, true);
                 f.mLoading = false;
                 f.mCallbacks.onUpdateLoading(false);

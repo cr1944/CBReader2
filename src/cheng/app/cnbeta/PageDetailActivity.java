@@ -4,15 +4,20 @@ package cheng.app.cnbeta;
 import cheng.app.cnbeta.PageDetailFragment.Callbacks;
 import cheng.app.cnbeta.lib.SlidingUpPanelLayout;
 import cheng.app.cnbeta.lib.SlidingUpPanelLayout.PanelSlideListener;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -21,13 +26,21 @@ import android.widget.TextView;
  * This activity is mostly just a 'shell' activity containing nothing more than
  * a {@link PageDetailFragment}.
  */
-public class PageDetailActivity extends FragmentActivity implements PanelSlideListener, Callbacks {
+public class PageDetailActivity extends FragmentActivity
+    implements PanelSlideListener, Callbacks, DrawerListener {
     static final String TAG = "PageDetailActivity";
     private static final String STATE_SLIDINGPANE_OPEN = "slidingpane_open";
 
+    private static final int LAYOUT_SLIDINGUP = 1;
+    private static final int LAYOUT_DRAWER = 2;
+    private int mLayoutState;
+
     SlidingUpPanelLayout mSlidingUpPanelLayout;
+    DrawerLayout mDrawerLayout;
+    LinearLayout mCommentsLayout;
     TextView mCommentTitleView;
     private Menu mOptionsMenu;
+    private int mCmtNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +49,24 @@ public class PageDetailActivity extends FragmentActivity implements PanelSlideLi
 
         // Show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mSlidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        mSlidingUpPanelLayout.setPanelHeight(getResources().getDimensionPixelSize(
-                R.dimen.slidingup_panel_height));
-        mCommentTitleView = (TextView) findViewById(R.id.page_detail_comments_title);
-        mSlidingUpPanelLayout.setDragView(mCommentTitleView);
-        mSlidingUpPanelLayout
-                .setShadowDrawable(getResources().getDrawable(R.drawable.above_shadow));
-        mSlidingUpPanelLayout.setPanelSlideListener(this);
+        mCommentsLayout = (LinearLayout) findViewById(R.id.page_detail_comments);
+        if (mSlidingUpPanelLayout != null) {
+            mLayoutState = LAYOUT_SLIDINGUP;
+            mSlidingUpPanelLayout.setPanelHeight(getResources().getDimensionPixelSize(
+                    R.dimen.slidingup_panel_height));
+            mCommentTitleView = (TextView) findViewById(R.id.page_detail_comments_title);
+            mSlidingUpPanelLayout.setDragView(mCommentTitleView);
+            mSlidingUpPanelLayout
+                    .setShadowDrawable(getResources().getDrawable(R.drawable.above_shadow));
+            mSlidingUpPanelLayout.setPanelSlideListener(this);
+        } else if (mDrawerLayout != null) {
+            mLayoutState = LAYOUT_DRAWER;
+            mDrawerLayout.setDrawerListener(this);
+        } else {
+            throw new IllegalStateException("must setup a SlidingUpPanelLayout or DrawerLayout.");
+        }
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -71,7 +94,7 @@ public class PageDetailActivity extends FragmentActivity implements PanelSlideLi
         } else {
             if(savedInstanceState.containsKey(STATE_SLIDINGPANE_OPEN)) {
                 boolean isExpanded = savedInstanceState.getBoolean(STATE_SLIDINGPANE_OPEN);
-                if (isExpanded) {
+                if (mLayoutState == LAYOUT_SLIDINGUP && isExpanded) {
                     getActionBar().hide();
                 }
             }
@@ -81,7 +104,8 @@ public class PageDetailActivity extends FragmentActivity implements PanelSlideLi
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(STATE_SLIDINGPANE_OPEN, mSlidingUpPanelLayout.isExpanded());
+        if (mLayoutState == LAYOUT_SLIDINGUP)
+            outState.putBoolean(STATE_SLIDINGPANE_OPEN, mSlidingUpPanelLayout.isExpanded());
     }
 
     @Override
@@ -92,19 +116,21 @@ public class PageDetailActivity extends FragmentActivity implements PanelSlideLi
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void triggerRefresh(boolean refreshing) {
-        if (mOptionsMenu == null) {
-            return;
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.action_cmt);
+        if (mCmtNumber < 0) {
+            menuItem.setTitle(R.string.cmt_closed);
+        } else {
+            menuItem.setTitle(getString(R.string.display_cmt, mCmtNumber));
         }
-
-        final MenuItem refreshItem = mOptionsMenu.findItem(R.id.action_refresh);
-        if (refreshItem != null) {
-            if (refreshing) {
-                refreshItem.setActionView(R.layout.actionbar_indeterminate_progress);
-            } else {
-                refreshItem.setActionView(null);
-            }
+        menuItem.setVisible(mLayoutState == LAYOUT_DRAWER);
+        if (mLayoutState == LAYOUT_DRAWER) {
+            boolean drawerOpen = mDrawerLayout.isDrawerOpen(mCommentsLayout);
+            menu.findItem(R.id.action_refresh).setVisible(!drawerOpen);
+            menu.findItem(R.id.action_share).setVisible(!drawerOpen);
         }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -120,8 +146,30 @@ public class PageDetailActivity extends FragmentActivity implements PanelSlideLi
                 //
                 NavUtils.navigateUpTo(this, new Intent(this, PageListActivity.class));
                 return true;
+            case R.id.action_cmt:
+                if (mDrawerLayout.isDrawerVisible(GravityCompat.END)) {
+                    mDrawerLayout.closeDrawer(GravityCompat.END);
+                } else {
+                    mDrawerLayout.openDrawer(GravityCompat.END);
+                }
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void triggerRefresh(boolean refreshing) {
+        if (mOptionsMenu == null) {
+            return;
+        }
+
+        final MenuItem menuItem = mOptionsMenu.findItem(R.id.action_refresh);
+        if (menuItem != null) {
+            if (refreshing) {
+                menuItem.setActionView(R.layout.actionbar_indeterminate_progress);
+            } else {
+                menuItem.setActionView(null);
+            }
+        }
     }
 
     @Override
@@ -152,13 +200,40 @@ public class PageDetailActivity extends FragmentActivity implements PanelSlideLi
     }
 
     @Override
+    public void onDrawerClosed(View arg0) {
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onDrawerOpened(View arg0) {
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onDrawerSlide(View arg0, float arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onDrawerStateChanged(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
     public void onLoaded(int cmt) {
-        if (cmt < 0) {
-            if (mCommentTitleView != null)
-                mCommentTitleView.setText(R.string.cmt_closed);
+        if (mLayoutState == LAYOUT_SLIDINGUP) {
+            if (mCommentTitleView != null) {
+                if (cmt < 0) {
+                    mCommentTitleView.setText(R.string.cmt_closed);
+                } else {
+                    mCommentTitleView.setText(getString(R.string.display_cmt, cmt));
+                }
+            }
         } else {
-            if (mCommentTitleView != null)
-                mCommentTitleView.setText(getString(R.string.display_cmt, cmt));
+            mCmtNumber = cmt;
+            invalidateOptionsMenu();
         }
     }
 
@@ -169,8 +244,12 @@ public class PageDetailActivity extends FragmentActivity implements PanelSlideLi
 
     @Override
     public void onBackPressed() {
-        if (mSlidingUpPanelLayout.isExpanded()) {
+        if (mLayoutState == LAYOUT_SLIDINGUP && mSlidingUpPanelLayout.isExpanded()) {
             mSlidingUpPanelLayout.collapsePane();
+            return;
+        }
+        if (mLayoutState == LAYOUT_DRAWER && mDrawerLayout.isDrawerOpen(mCommentsLayout)) {
+            mDrawerLayout.closeDrawer(mCommentsLayout);
             return;
         }
         super.onBackPressed();

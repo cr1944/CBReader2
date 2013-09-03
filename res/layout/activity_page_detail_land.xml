@@ -1,5 +1,5 @@
-<cheng.app.cnbeta.lib.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/sliding_layout"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -10,18 +10,11 @@
 
     <LinearLayout
         android:id="@+id/page_detail_comments"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/drawer_panel_width"
         android:layout_height="match_parent"
+        android:layout_gravity="end"
         android:background="?android:attr/windowBackground"
         android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/page_detail_comments_title"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/slidingup_panel_height"
-            android:gravity="center"
-            android:text="@string/display_cmt"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <ListView
             android:id="@+id/page_detail_comments_list"
@@ -29,4 +22,4 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 
-</cheng.app.cnbeta.lib.SlidingUpPanelLayout>
+</android.support.v4.widget.DrawerLayout>

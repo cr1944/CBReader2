@@ -8,10 +8,16 @@
         android:showAsAction="ifRoom"
         android:title="@string/action_refresh"/>
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_share"
         android:icon="@drawable/ic_menu_share"
         android:orderInCategory="1"
         android:showAsAction="ifRoom"
         android:title="@string/action_share"/>
+    <item
+        android:id="@+id/action_cmt"
+        android:orderInCategory="2"
+        android:showAsAction="ifRoom|withText"
+        android:visible="false"
+        android:title="@string/display_cmt"/>
 
 </menu>

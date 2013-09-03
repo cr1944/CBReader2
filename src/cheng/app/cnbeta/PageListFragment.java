@@ -337,16 +337,13 @@ public class PageListFragment extends ListFragment implements
         @Override
         protected void onPostExecute(Long result) {
             final PageListFragment fragment = mFragment.get();
-            if (fragment != null) {
+            if (fragment != null && fragment.isResumed()) {
                 Log.d(TAG, "[" + fragment.getPageId() + "]onPostExecute, last saved id is " + result);
-                Activity activity = fragment.getActivity();
-                if (activity != null && !activity.isFinishing()) {
-                    // Prepare the loader.  Either re-connect with an existing one,
-                    // or start a new one.
-                    Bundle args = new Bundle();
-                    args.putLong(ARG_LAST_ID, result);
-                    fragment.getLoaderManager().restartLoader(fragment.mPageId, args, fragment);
-                }
+                // Prepare the loader.  Either re-connect with an existing one,
+                // or start a new one.
+                Bundle args = new Bundle();
+                args.putLong(ARG_LAST_ID, result);
+                fragment.getLoaderManager().restartLoader(fragment.mPageId, args, fragment);
             }
         }
     }

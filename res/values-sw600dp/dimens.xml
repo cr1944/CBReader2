@@ -5,4 +5,6 @@
     <dimen name="text_size_large">20sp</dimen>
     <dimen name="text_size_medium">16sp</dimen>
     <dimen name="text_size_small">14sp</dimen>
+    <dimen name="slidingup_panel_height">48dp</dimen>
+    <dimen name="drawer_panel_width">600dp</dimen>
 </resources>
