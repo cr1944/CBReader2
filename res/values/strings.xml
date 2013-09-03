@@ -14,4 +14,6 @@
     <string name="cmt_closed">评论已关闭</string>
     <string name="display_cmt">查看评论（<xliff:g example="0">%d</xliff:g>）</string>
     <string name="empty_text">加载失败，请重试</string>
+    <string name="type_to_compose_text_enter_to_send">Type comment</string>
+    <string name="send">Send</string>
 </resources>

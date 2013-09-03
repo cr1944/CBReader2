@@ -13,6 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?android:attr/windowBackground"
+        android:showDividers="middle"
+        android:divider="?android:dividerHorizontal"
         android:orientation="vertical" >
 
         <TextView
@@ -21,12 +23,9 @@
             android:layout_height="@dimen/slidingup_panel_height"
             android:gravity="center"
             android:text="@string/display_cmt"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <ListView
-            android:id="@+id/page_detail_comments_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:background="@color/base_bg_dark"
+            android:textAppearance="?android:attr/textAppearanceMediumInverse" />
+        <include layout="@layout/cmt_list_layout" />
     </LinearLayout>
 
 </cheng.app.cnbeta.lib.SlidingUpPanelLayout>

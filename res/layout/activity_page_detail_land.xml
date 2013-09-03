@@ -13,13 +13,12 @@
         android:layout_width="@dimen/drawer_panel_width"
         android:layout_height="match_parent"
         android:layout_gravity="end"
+        android:showDividers="middle"
+        android:divider="?android:dividerHorizontal"
         android:background="?android:attr/windowBackground"
         android:orientation="vertical" >
 
-        <ListView
-            android:id="@+id/page_detail_comments_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <include layout="@layout/cmt_list_layout" />
     </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

@@ -17,6 +17,7 @@
 
     <declare-styleable name="BaseTheme">
         <attr name="listItemBackground" format="reference" />
+        <attr name="baseBackground" format="reference" />
     </declare-styleable>
 
 </resources>
