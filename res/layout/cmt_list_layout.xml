@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <ListView
+    <FrameLayout
         android:id="@+id/page_detail_comments_list"
         android:layout_width="match_parent"
         android:layout_weight="1"
@@ -23,7 +23,7 @@
             android:layout_weight="1.0"
             android:hint="@string/type_to_compose_text_enter_to_send"
             android:imeOptions="actionSend|flagNoEnterAction"
-            android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
+            android:inputType="textCapSentences|textMultiLine"
             android:maxLength="2000"
             android:maxLines="3"
             android:minHeight="@dimen/input_text_height"

@@ -16,4 +16,5 @@
     <string name="empty_text">加载失败，请重试</string>
     <string name="type_to_compose_text_enter_to_send">Type comment</string>
     <string name="send">Send</string>
+    <string name="cmt_empty_text">没有评论</string>
 </resources>

@@ -28,7 +28,7 @@
             android:name="cheng.app.cnbeta.PageDetailActivity"
             android:label="@string/title_page_detail"
             android:theme="@style/AppTheme.PageDetial"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:windowSoftInputMode="adjustUnspecified|stateAlwaysHidden"
             android:parentActivityName=".PageListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

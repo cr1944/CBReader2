@@ -57,12 +57,12 @@ public class PageDetailFragment extends Fragment implements LoaderCallbacks<Curs
     private boolean mLoading;
 
     public interface Callbacks {
-        public void onLoaded(int cmt);
+        public void onLoaded(int cmt, long newsId);
         public void onUpdateLoading(boolean loading);
     }
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onLoaded(int cmt) {
+        public void onLoaded(int cmt, long newsId) {
             Log.e(TAG, "onLoaded, no activity this fragment attached!");
         }
         @Override
@@ -214,7 +214,7 @@ public class PageDetailFragment extends Fragment implements LoaderCallbacks<Curs
                 cmtNumber = cmtClosed > 0 ? -1 : cmtNumber;
                 title = arg1.getString(arg1.getColumnIndex(NewsColumns.TITLE));
             }
-            mCallbacks.onLoaded(cmtNumber);
+            mCallbacks.onLoaded(cmtNumber, mNewsId);
             new LoadNewsTask(this, mNewsId, title, cmtNumber).execute();
         }
     }

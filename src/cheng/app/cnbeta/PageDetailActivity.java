@@ -8,6 +8,7 @@ import cheng.app.cnbeta.lib.SlidingUpPanelLayout.PanelSlideListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -41,6 +42,8 @@ public class PageDetailActivity extends FragmentActivity
     TextView mCommentTitleView;
     private Menu mOptionsMenu;
     private int mCmtNumber;
+    private long mNewsId;
+    private PageCommentsFragment mCommentsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +80,7 @@ public class PageDetailActivity extends FragmentActivity
         //
         // http://developer.android.com/guide/components/fragments.html
         //
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
@@ -89,8 +93,7 @@ public class PageDetailActivity extends FragmentActivity
                             PageListFragment.PAGE_NEWS));
             PageDetailFragment fragment = new PageDetailFragment();
             fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.page_detail_container, fragment).commit();
+            ft.add(R.id.page_detail_container, fragment);
         } else {
             if(savedInstanceState.containsKey(STATE_SLIDINGPANE_OPEN)) {
                 boolean isExpanded = savedInstanceState.getBoolean(STATE_SLIDINGPANE_OPEN);
@@ -99,6 +102,14 @@ public class PageDetailActivity extends FragmentActivity
                 }
             }
         }
+        mCommentsFragment = new PageCommentsFragment();
+        ft.add(R.id.page_detail_comments_list, mCommentsFragment);
+        ft.commit();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override
@@ -174,15 +185,16 @@ public class PageDetailActivity extends FragmentActivity
 
     @Override
     public void onPanelCollapsed(View arg0) {
-        // TODO Auto-generated method stub
         Log.d(TAG, "onPanelCollapsed");
 
     }
 
     @Override
     public void onPanelExpanded(View arg0) {
-        // TODO Auto-generated method stub
         Log.d(TAG, "onPanelExpanded");
+        if (mNewsId > 0 && mCommentsFragment != null) {
+            mCommentsFragment.LoadData(mNewsId);
+        }
 
     }
 
@@ -207,6 +219,9 @@ public class PageDetailActivity extends FragmentActivity
     @Override
     public void onDrawerOpened(View arg0) {
         invalidateOptionsMenu();
+        if (mNewsId > 0 && mCommentsFragment != null) {
+            mCommentsFragment.LoadData(mNewsId);
+        }
     }
 
     @Override
@@ -222,7 +237,8 @@ public class PageDetailActivity extends FragmentActivity
     }
 
     @Override
-    public void onLoaded(int cmt) {
+    public void onLoaded(int cmt, long newsId) {
+        mNewsId = newsId;
         if (mLayoutState == LAYOUT_SLIDINGUP) {
             if (mCommentTitleView != null) {
                 if (cmt < 0) {

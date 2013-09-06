@@ -1,3 +1,4 @@
+
 package cheng.app.cnbeta.util;
 
 import android.content.ContentResolver;
@@ -6,7 +7,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
-import cheng.app.cnbeta.data.CBCommentEntry;
+
+import cheng.app.cnbeta.CBComment;
 import cheng.app.cnbeta.data.CBContract;
 import cheng.app.cnbeta.data.CBContract.HmColumns;
 import cheng.app.cnbeta.data.CBContract.NewsColumns;
@@ -23,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedList;
+import java.util.List;
 
 public class DataUtil {
     public static final String TAG = "JSONUtil";
@@ -35,7 +38,8 @@ public class DataUtil {
         try {
             JSONArray array = new JSONArray(new JSONTokener(text));
             int length = array.length();
-            if (length == 0) return articleId;
+            if (length == 0)
+                return articleId;
             for (int i = 0; i < length; i++) {
                 JSONObject item = array.getJSONObject(i);
                 ContentValues values = new ContentValues();
@@ -48,7 +52,8 @@ public class DataUtil {
                 values.put(NewsColumns.SUMMARY, HttpUtil.escape(item.optString("summary")));
                 values.put(NewsColumns.THEME, item.optString("theme").replace(" ", "%20"));
                 values.put(NewsColumns.TOPIC_LOGO, item.optString("topicLogo").replace(" ", "%20"));
-                int row = cr.update(Uri.withAppendedPath(CBContract.NEWS_CONTENT_URI, String.valueOf(articleId)), values, null, null);
+                int row = cr.update(Uri.withAppendedPath(CBContract.NEWS_CONTENT_URI,
+                        String.valueOf(articleId)), values, null, null);
                 if (row < 1)
                     cr.insert(CBContract.NEWS_CONTENT_URI, values);
             }
@@ -67,7 +72,8 @@ public class DataUtil {
         try {
             JSONArray array = new JSONArray(new JSONTokener(text));
             int length = array.length();
-            if (length == 0) return hmid;
+            if (length == 0)
+                return hmid;
             for (int i = 0; i < length; i++) {
                 JSONObject item = array.getJSONObject(i);
                 ContentValues values = new ContentValues();
@@ -79,7 +85,9 @@ public class DataUtil {
                 values.put(HmColumns.HMID, hmid);
                 values.put(HmColumns.CMT_CLOSED, item.optInt("cmtClosed"));
                 values.put(HmColumns.CMT_NUMBER, item.optInt("cmtnum"));
-                int row = cr.update(Uri.withAppendedPath(CBContract.HM_CONTENT_URI, String.valueOf(hmid)), values, null, null);
+                int row = cr.update(
+                        Uri.withAppendedPath(CBContract.HM_CONTENT_URI, String.valueOf(hmid)),
+                        values, null, null);
                 if (row < 1)
                     cr.insert(CBContract.HM_CONTENT_URI, values);
             }
@@ -90,29 +98,33 @@ public class DataUtil {
         return hmid;
     }
 
-    public static LinkedList<CBCommentEntry> parseComments(long newsId, String title, String text) {
-        try {
-            JSONArray array = new JSONArray(new JSONTokener(text));
-            int length = array.length();
-            LinkedList<CBCommentEntry> result = new LinkedList<CBCommentEntry>();
-            for (int i = 0; i < length; i++) {
-                JSONObject item = array.getJSONObject(i);
-                CBCommentEntry cmt = new CBCommentEntry();
-                cmt.newsId = newsId;
-                cmt.title = title;
-                cmt.name = item.optString("name");
-                cmt.comment = item.optString("comment");
-                cmt.date = item.optString("date");
-                cmt.tid = item.optLong("tid");
-                cmt.support = item.optInt("support");
-                cmt.against = item.optInt("against");
-                result.add(cmt);
+    public static List<CBComment> readComments(long articleId) {
+        String url = Configs.COMMENT_URL + articleId;
+        String html = HttpUtil.getInstance().httpGet(url);
+        if (!TextUtils.isEmpty(html)) {
+            try {
+                JSONArray array = new JSONArray(new JSONTokener(html));
+                int length = array.length();
+                List<CBComment> result = new LinkedList<CBComment>();
+                for (int i = 0; i < length; i++) {
+                    JSONObject item = array.getJSONObject(i);
+                    CBComment cmt = new CBComment();
+                    cmt.newsId = articleId;
+                    // cmt.title = title;
+                    cmt.name = item.optString("name");
+                    cmt.comment = item.optString("comment");
+                    cmt.date = item.optString("date");
+                    cmt.tid = item.optLong("tid");
+                    cmt.support = item.optInt("support");
+                    cmt.against = item.optInt("against");
+                    result.add(cmt);
+                }
+                return result;
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            return result;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
         }
+        return null;
     }
 
     public static String readNews(long articleId, boolean hasSdCard) {
@@ -198,8 +210,7 @@ public class DataUtil {
 
     public static boolean hasSdcard() {
         try {
-            return Environment.getExternalStorageState().equals(
-                    Environment.MEDIA_MOUNTED);
+            return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
         } catch (Exception e) {
             e.printStackTrace();
         }
