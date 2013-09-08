@@ -103,7 +103,7 @@ public class PageDetailActivity extends FragmentActivity
             }
         }
         mCommentsFragment = new PageCommentsFragment();
-        ft.add(R.id.page_detail_comments_list, mCommentsFragment);
+        ft.replace(R.id.page_detail_comments_list, mCommentsFragment);
         ft.commit();
     }
 
@@ -213,11 +213,13 @@ public class PageDetailActivity extends FragmentActivity
 
     @Override
     public void onDrawerClosed(View arg0) {
+        Log.d(TAG, "onDrawerClosed");
         invalidateOptionsMenu();
     }
 
     @Override
     public void onDrawerOpened(View arg0) {
+        Log.d(TAG, "onDrawerOpened");
         invalidateOptionsMenu();
         if (mNewsId > 0 && mCommentsFragment != null) {
             mCommentsFragment.LoadData(mNewsId);

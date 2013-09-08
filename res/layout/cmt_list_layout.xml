@@ -5,13 +5,14 @@
         android:id="@+id/page_detail_comments_list"
         android:layout_width="match_parent"
         android:layout_weight="1"
+        android:padding="@dimen/multipane_half_padding"
         android:layout_height="0dp" />
 
     <LinearLayout
         android:id="@+id/bottom_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#fff"
+        android:background="?baseBackground"
         android:orientation="horizontal" >
 
         <EditText

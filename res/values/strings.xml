@@ -17,4 +17,5 @@
     <string name="type_to_compose_text_enter_to_send">Type comment</string>
     <string name="send">Send</string>
     <string name="cmt_empty_text">没有评论</string>
+    <string name="no_name">匿名人士</string>
 </resources>

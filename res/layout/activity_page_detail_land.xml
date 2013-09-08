@@ -16,6 +16,7 @@
         android:showDividers="middle"
         android:divider="?android:dividerHorizontal"
         android:background="?android:attr/windowBackground"
+        android:paddingTop="?android:attr/actionBarSize"
         android:orientation="vertical" >
 
         <include layout="@layout/cmt_list_layout" />
