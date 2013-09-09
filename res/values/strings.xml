@@ -18,4 +18,5 @@
     <string name="send">Send</string>
     <string name="cmt_empty_text">没有评论</string>
     <string name="no_name">匿名人士</string>
+    <string name="empty_tip">请填写评论后再发表</string>
 </resources>

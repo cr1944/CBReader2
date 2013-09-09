@@ -3,25 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?listItemBackground"
-    android:padding="@dimen/page_item_padding"
     android:orientation="vertical" >
 
     <TextView
         android:id="@+id/page_list_hm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/page_list_hm_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:padding="@dimen/page_item_padding"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
         android:id="@+id/page_list_hm_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:padding="@dimen/page_item_padding"
+        android:background="#bbb"
+        android:textColor="#fff"
+        android:textStyle="bold"
+        android:textAppearance="?android:attr/textAppearanceSmallInverse" />
 
 </LinearLayout>

@@ -24,6 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
+            android:textStyle="italic"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/textColorTertiary" />
     </LinearLayout>
@@ -44,6 +45,7 @@
             android:id="@+id/cmt_list_support"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="?android:attr/borderlessButtonStyle"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:drawableLeft="@drawable/rating_good" />
 
@@ -51,6 +53,7 @@
             android:id="@+id/cmt_list_against"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="?android:attr/borderlessButtonStyle"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:drawableLeft="@drawable/rating_bad" />
     </LinearLayout>

@@ -34,13 +34,11 @@ public class PageListAdapter extends CursorAdapter {
 
     private void bindHMView(View arg0, Context arg1, Cursor arg2) {
         final String hm = arg2.getString(arg2.getColumnIndex(HmColumns.COMMENT));
-        final String name = arg2.getString(arg2.getColumnIndex(HmColumns.NAME));
+        //final String name = arg2.getString(arg2.getColumnIndex(HmColumns.NAME));
         final String title = arg2.getString(arg2.getColumnIndex(HmColumns.TITLE));
         final TextView hmView = (TextView) arg0.findViewById(R.id.page_list_hm);
-        final TextView nameView = (TextView) arg0.findViewById(R.id.page_list_hm_name);
         final TextView titleView = (TextView) arg0.findViewById(R.id.page_list_hm_title);
         hmView.setText(hm);
-        nameView.setText(name);
         titleView.setText(title);
     }
 

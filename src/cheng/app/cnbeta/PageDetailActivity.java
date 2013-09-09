@@ -13,13 +13,18 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * An activity representing a single Page detail screen.
@@ -40,10 +45,24 @@ public class PageDetailActivity extends FragmentActivity
     DrawerLayout mDrawerLayout;
     LinearLayout mCommentsLayout;
     TextView mCommentTitleView;
+    EditText mCommentEditView;
+    ImageButton mSendButton;
     private Menu mOptionsMenu;
     private int mCmtNumber;
     private long mNewsId;
     private PageCommentsFragment mCommentsFragment;
+    private OnClickListener mSendClickListener = new OnClickListener() {
+        
+        @Override
+        public void onClick(View v) {
+            // TODO Auto-generated method stub
+            String text = mCommentEditView.getText().toString();
+            if (TextUtils.isEmpty(text)) {
+                Toast.makeText(PageDetailActivity.this, R.string.empty_tip, Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +74,9 @@ public class PageDetailActivity extends FragmentActivity
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mSlidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         mCommentsLayout = (LinearLayout) findViewById(R.id.page_detail_comments);
+        mCommentEditView = (EditText) findViewById(R.id.embedded_text_editor);
+        mSendButton = (ImageButton) findViewById(R.id.send_button);
+        mSendButton.setOnClickListener(mSendClickListener);
         if (mSlidingUpPanelLayout != null) {
             mLayoutState = LAYOUT_SLIDINGUP;
             mSlidingUpPanelLayout.setPanelHeight(getResources().getDimensionPixelSize(
@@ -245,11 +267,17 @@ public class PageDetailActivity extends FragmentActivity
             if (mCommentTitleView != null) {
                 if (cmt < 0) {
                     mCommentTitleView.setText(R.string.cmt_closed);
+                    mCommentEditView.setEnabled(false);
+                    mSendButton.setEnabled(false);
                 } else {
                     mCommentTitleView.setText(getString(R.string.display_cmt, cmt));
                 }
             }
         } else {
+            if (cmt < 0) {
+                mCommentEditView.setEnabled(false);
+                mSendButton.setEnabled(false);
+            }
             mCmtNumber = cmt;
             invalidateOptionsMenu();
         }
@@ -272,4 +300,5 @@ public class PageDetailActivity extends FragmentActivity
         }
         super.onBackPressed();
     }
+
 }

@@ -7,11 +7,13 @@ import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import cheng.app.cnbeta.util.DataUtil;
 import cheng.app.cnbeta.util.TimeUtil;
 
@@ -33,6 +35,7 @@ public class PageCommentsFragment extends ListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ListView lv = getListView();
+        lv.setItemsCanFocus(true);
         lv.setDrawSelectorOnTop(true);
         lv.setDivider(view.getResources().getDrawable(android.R.color.transparent));
         lv.setDividerHeight(view.getResources().getDimensionPixelSize(R.dimen.multipane_padding));
@@ -61,6 +64,27 @@ public class PageCommentsFragment extends ListFragment {
 
     class CommentListAdapter extends ArrayAdapter<CBComment> {
         final LayoutInflater mInflater;
+        private OnClickListener mSupportListener = new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                CBComment cmt = (CBComment) v.getTag();
+                if (cmt != null) {
+                    
+                }
+            }
+        };
+
+        private OnClickListener mAgainstListener = new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                CBComment cmt = (CBComment) v.getTag();
+                if (cmt != null) {
+                    
+                }
+            }
+        };
 
         public CommentListAdapter(Context context, List<CBComment> list) {
             super(context, 0, list);
@@ -77,6 +101,7 @@ public class PageCommentsFragment extends ListFragment {
             if (tag instanceof CommentViewHolder) {
                 holder = (CommentViewHolder) tag;
             }
+            CBComment item = getItem(position);
             if (holder == null) {
                 holder = new CommentViewHolder();
                 convertView.setTag(holder);
@@ -85,8 +110,11 @@ public class PageCommentsFragment extends ListFragment {
                 holder.comment = (TextView) convertView.findViewById(R.id.cmt_list_text);
                 holder.support = (Button) convertView.findViewById(R.id.cmt_list_support);
                 holder.against = (Button) convertView.findViewById(R.id.cmt_list_against);
+                holder.support.setOnClickListener(mSupportListener);
+                holder.against.setOnClickListener(mAgainstListener);
             }
-            CBComment item = getItem(position);
+            holder.support.setTag(item);
+            holder.against.setTag(item);
             if (TextUtils.isEmpty(item.name))
                 holder.name.setText(R.string.no_name);
             else
