@@ -57,7 +57,7 @@ public class Configs {
             + "/.CBReader/screenshot_cache";
 
     public static final String EMAIL_REX = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
-    
+    public static final String ROOT_URL = "http://www.cnbeta.com";
     public static final String NEWSLIST_URL = "http://www.cnbeta.com/api/getNewsList.php?limit=";
     public static final int LIMIT = 20;
     public static final String NEWSLIST_PAGE = "&fromArticleId=";
@@ -66,7 +66,7 @@ public class Configs {
     public static final String HMCOMMENT_PAGE = "&fromHMCommentId=";
     public static final String NEWS_CONTENT_URL = "http://www.cnbeta.com/api/getNewsContent2.php?articleId=";
     public static final String COMMENT_URL = "http://www.cnbeta.com/api/getComment.php?article=";
-    public static final String VALIDATE_URL = "http://www.cnbeta.com/validate1.php";
+    public static final String VALIDATE_URL = "http://www.cnbeta.com/captcha.htm?refresh=1";
     public static final String POST_COMMENT_URL = "http://www.cnbeta.com/Ajax.comment.php?ver=new";
     public static final String REPORT_URL = "http://www.cnbeta.com/Ajax.report.php?tid=";
     public static final String SUPPORT_URL = "http://www.cnbeta.com/Ajax.vote.php?support=1&tid=";
@@ -83,11 +83,4 @@ public class Configs {
     //public static final String COMMENT_URL = "http://m.cnbeta.com/mcomment.php?sid=";
     //public static final String HOT_COMMENT_URL = "http://www.cnbeta.com/comment/g_content/207959.html";
     //public static final String COMMENT_URL = "http://www.cnbeta.com/comment/normal/207959.html";
-    //tencent
-    public static final String REDIRECTURL = "http://t.qq.com/chengr1944";
-    public static final String CLIENTID = "801003718"; 
-    public static final String CLIENTSECRET = "59e09494b52ff758dccc143501a553c5";
-    //sina
-    public static final String SINA_REDIRECT_URL = "http://www.sina.com";
-    public static final String SINA_APPKEY = "1876229885"; 
 }

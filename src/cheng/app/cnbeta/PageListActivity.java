@@ -8,12 +8,15 @@ import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 
 /**
  * An activity representing a list of Pages. This activity has different
@@ -100,6 +103,19 @@ public class PageListActivity extends FragmentActivity implements PageListFragme
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_abouts:
+                showAbout(this);
+                return true;
+
+            case R.id.action_settings:
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onTabReselected(Tab tab, android.app.FragmentTransaction ft) {
         // TODO Auto-generated method stub
 
@@ -134,5 +150,16 @@ public class PageListActivity extends FragmentActivity implements PageListFragme
     public void onPageSelected(int arg0) {
         if (!mTwoPane)
             getActionBar().setSelectedNavigationItem(arg0);
+    }
+
+    public static void showAbout(FragmentActivity activity) {
+        FragmentManager fm = activity.getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        Fragment prev = fm.findFragmentByTag("dialog_about");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        new AboutFragment().show(ft, "dialog_about");
     }
 }

@@ -19,4 +19,17 @@
     <string name="cmt_empty_text">没有评论</string>
     <string name="no_name">匿名人士</string>
     <string name="empty_tip">请填写评论后再发表</string>
+    <string name="type_security">请输入验证码</string>
+    <string name="vote_success">谢谢您的参与</string>
+    <string name="vote_fail">你已经投过票了</string>
+    <string name="report_success">感谢您的举报</string>
+    <string name="report_fail_1">请勿重复举报</string>
+    <string name="report_fail_2">您今天已经举报了很多次，谢谢您的参与。</string>
+    <string name="report_fail_3">出错了</string>
+    <string name="about_licenses">Open Source Licenses</string>
+    <string name="about_body"><![CDATA[
+        <b>CBReader</b><br>
+        Version %s<br><br>
+        <a href="https://github.com/cr1944/CBReader2">GitHub</a>
+    ]]></string>
 </resources>

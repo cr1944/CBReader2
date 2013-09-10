@@ -1,5 +1,6 @@
 package cheng.app.cnbeta;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,8 +14,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import cheng.app.cnbeta.util.Configs;
 import cheng.app.cnbeta.util.DataUtil;
+import cheng.app.cnbeta.util.HttpUtil;
 import cheng.app.cnbeta.util.TimeUtil;
 
 import java.lang.ref.WeakReference;
@@ -25,6 +29,58 @@ public class PageCommentsFragment extends ListFragment {
     private List<CBComment> mData = new LinkedList<CBComment>();
     private CommentListAdapter mAdapter;
     private boolean mIsLoading;
+
+    private OnClickListener mSupportListener = new OnClickListener() {
+        
+        @Override
+        public void onClick(View v) {
+            CBComment cmt = (CBComment) v.getTag();
+            if (cmt != null) {
+                new ActionTask(PageCommentsFragment.this, ActionTask.TYPE_SUPPORT, cmt.tid).execute();
+            }
+        }
+    };
+
+    private OnClickListener mAgainstListener = new OnClickListener() {
+        
+        @Override
+        public void onClick(View v) {
+            CBComment cmt = (CBComment) v.getTag();
+            if (cmt != null) {
+                new ActionTask(PageCommentsFragment.this, ActionTask.TYPE_AGAINST, cmt.tid).execute();
+            }
+        }
+    };
+
+    public void support(long tid) {
+        if (!mData.isEmpty()) {
+            int size = mData.size();
+            for (int i = 0; i < size; i++) {
+                CBComment item = mData.get(i);
+                if (item.tid == tid) {
+                    item.support += 1;
+                    mData.set(i, item);
+                    break;
+                }
+            }
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    public void aggainst(long tid) {
+        if (!mData.isEmpty()) {
+            int size = mData.size();
+            for (int i = 0; i < size; i++) {
+                CBComment item = mData.get(i);
+                if (item.tid == tid) {
+                    item.against += 1;
+                    mData.set(i, item);
+                    break;
+                }
+            }
+        }
+        mAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,27 +120,6 @@ public class PageCommentsFragment extends ListFragment {
 
     class CommentListAdapter extends ArrayAdapter<CBComment> {
         final LayoutInflater mInflater;
-        private OnClickListener mSupportListener = new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                CBComment cmt = (CBComment) v.getTag();
-                if (cmt != null) {
-                    
-                }
-            }
-        };
-
-        private OnClickListener mAgainstListener = new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                CBComment cmt = (CBComment) v.getTag();
-                if (cmt != null) {
-                    
-                }
-            }
-        };
 
         public CommentListAdapter(Context context, List<CBComment> list) {
             super(context, 0, list);
@@ -134,6 +169,79 @@ public class PageCommentsFragment extends ListFragment {
         TextView comment;
         Button support;
         Button against;
+    }
+
+    static class ActionTask extends AsyncTask<Void, Void, String> {
+        private WeakReference<PageCommentsFragment> mFragment;
+        static final int TYPE_SUPPORT = 0;
+        static final int TYPE_AGAINST = 1;
+        static final int TYPE_REPORT = 2;
+        int mType;
+        long mTid;
+        ActionTask(PageCommentsFragment f, int type, long tid) {
+            mFragment = new WeakReference<PageCommentsFragment>(f);
+            mType = type;
+            mTid = tid;
+        }
+        @Override
+        protected String doInBackground(Void... params) {
+            String result = null;
+            switch (mType) {
+                case TYPE_SUPPORT:
+                    result = HttpUtil.getInstance().httpGet(Configs.SUPPORT_URL + mTid);
+                    break;
+                case TYPE_AGAINST:
+                    result = HttpUtil.getInstance().httpGet(Configs.AGGAINST_URL + mTid);
+                    break;
+                case TYPE_REPORT:
+                    result = HttpUtil.getInstance().httpGet(Configs.REPORT_URL + mTid);
+                    break;
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            PageCommentsFragment f = mFragment.get();
+            if (f == null || !f.isResumed()) {
+                return;
+            }
+            Activity a = f.getActivity();
+            if (a == null || a.isFinishing()) {
+                return;
+            }
+            if (!TextUtils.isEmpty(result)) {
+                switch (mType) {
+                    case TYPE_SUPPORT:
+                        if (result.substring(0, 1).equals("0")) {
+                            f.support(mTid);
+                            Toast.makeText(a, R.string.vote_success, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(a, R.string.vote_fail, Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case TYPE_AGAINST:
+                        if (result.substring(0, 1).equals("0")) {
+                            f.aggainst(mTid);
+                            Toast.makeText(a, R.string.vote_success, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(a, R.string.vote_fail, Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case TYPE_REPORT:
+                        if (result.substring(0, 1).equals("0")) {
+                            Toast.makeText(a, R.string.report_success, Toast.LENGTH_SHORT).show();
+                        } else if (result.substring(0, 1).equals("1")) {
+                            Toast.makeText(a, R.string.report_fail_1, Toast.LENGTH_SHORT).show();
+                        } else if (result.substring(0, 1).equals("2")) {
+                            Toast.makeText(a, R.string.report_fail_2, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(a, R.string.report_fail_3, Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                }
+            }
+        }
     }
 
     private static class LoadTask extends AsyncTask<Long, Void, List<CBComment>> {

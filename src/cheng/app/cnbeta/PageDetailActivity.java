@@ -39,6 +39,7 @@ public class PageDetailActivity extends FragmentActivity
 
     private static final int LAYOUT_SLIDINGUP = 1;
     private static final int LAYOUT_DRAWER = 2;
+    public static final String TAG_CMT_FRAGMENT = "tag_cmt_fragment";
     private int mLayoutState;
 
     SlidingUpPanelLayout mSlidingUpPanelLayout;
@@ -51,16 +52,23 @@ public class PageDetailActivity extends FragmentActivity
     private int mCmtNumber;
     private long mNewsId;
     private PageCommentsFragment mCommentsFragment;
+    private PostCommentFragment mPostCommentFragment;
     private OnClickListener mSendClickListener = new OnClickListener() {
         
         @Override
         public void onClick(View v) {
-            // TODO Auto-generated method stub
             String text = mCommentEditView.getText().toString();
             if (TextUtils.isEmpty(text)) {
                 Toast.makeText(PageDetailActivity.this, R.string.empty_tip, Toast.LENGTH_SHORT).show();
                 return;
             }
+            mPostCommentFragment = (PostCommentFragment) getSupportFragmentManager().findFragmentByTag(TAG_CMT_FRAGMENT);
+            if (mPostCommentFragment == null) {
+                mPostCommentFragment = new PostCommentFragment();
+                mPostCommentFragment.setCancelable(false);
+            }
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            mPostCommentFragment.show(ft, TAG_CMT_FRAGMENT);
         }
     };
 
