@@ -18,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import cheng.app.cnbeta.util.HelpUtils;
+
 /**
  * An activity representing a list of Pages. This activity has different
  * presentations for handset and tablet-size devices. On handsets, the activity
@@ -106,7 +108,7 @@ public class PageListActivity extends FragmentActivity implements PageListFragme
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_abouts:
-                showAbout(this);
+                HelpUtils.showAbout(this);
                 return true;
 
             case R.id.action_settings:
@@ -152,14 +154,4 @@ public class PageListActivity extends FragmentActivity implements PageListFragme
             getActionBar().setSelectedNavigationItem(arg0);
     }
 
-    public static void showAbout(FragmentActivity activity) {
-        FragmentManager fm = activity.getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        Fragment prev = fm.findFragmentByTag("dialog_about");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-        new AboutFragment().show(ft, "dialog_about");
-    }
 }

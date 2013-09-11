@@ -19,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import cheng.app.cnbeta.util.HelpUtils;
+
 public class AboutFragment extends DialogFragment {
     private static final String VERSION_NA = "N/A";
 
@@ -45,8 +47,7 @@ public class AboutFragment extends DialogFragment {
 
             @Override
             public void onClick(View widget) {
-                // TODO Auto-generated method stub
-
+                HelpUtils.showOpenSourceLicenses(getActivity());
             }
         }, 0, licensesLink.length(), 0);
         aboutBody.append("\n\n");

@@ -29,7 +29,8 @@
     <string name="about_licenses">Open Source Licenses</string>
     <string name="about_body"><![CDATA[
         <b>CBReader</b><br>
-        Version %s<br><br>
+        Version %s<br>
+        Author <a href="mailto:ryancheng1944@gmail.com">Ryan Cheng</a><br><br>
         <a href="https://github.com/cr1944/CBReader2">GitHub</a>
     ]]></string>
 </resources>
