@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="preferences_theme_labels">
+        <item>古德白</item>
+        <item>高级黑</item>
+    </string-array>
+
+    <string-array name="preferences_theme_values" translatable="false">
+        <item>"0"</item>
+        <item>"1"</item>
+    </string-array>
+
+</resources>

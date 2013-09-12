@@ -16,7 +16,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="cheng.app.cnbeta.PageListActivity"
+            android:name=".PageListActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,13 +25,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="cheng.app.cnbeta.PageDetailActivity"
+            android:name=".PageDetailActivity"
             android:label="@string/title_page_detail"
             android:theme="@style/AppTheme.PageDetial"
             android:windowSoftInputMode="adjustUnspecified|stateAlwaysHidden"
             android:parentActivityName=".PageListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
+                android:value=".PageListActivity" />
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/action_settings"
+            android:theme="@style/Theme.AppCompat"
+            android:parentActivityName=".PageListActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
                 android:value=".PageListActivity" />
         </activity>
         <provider
