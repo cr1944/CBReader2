@@ -23,5 +23,12 @@
             android:entries="@array/preferences_theme_labels"
             android:entryValues="@array/preferences_theme_values"
             android:dialogTitle="@string/preferences_theme_title" />
-
+    <ListPreference
+            android:key="preferences_font_size"
+            android:defaultValue="0"
+            android:title="@string/preferences_font_size"
+            android:entries="@array/preferences_font_size_labels"
+            android:entryValues="@array/preferences_font_size_values"
+            android:dialogTitle="@string/preferences_font_size" />
+    
 </PreferenceScreen>

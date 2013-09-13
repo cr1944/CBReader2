@@ -34,4 +34,5 @@
         <a href="https://github.com/cr1944/CBReader2">GitHub</a>
     ]]></string>
     <string name="preferences_theme_title">Theme</string>
+    <string name="preferences_font_size">FontSize</string>
 </resources>

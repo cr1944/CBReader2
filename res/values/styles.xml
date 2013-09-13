@@ -11,7 +11,9 @@
             backward-compatibility can go here.
         -->
     </style>
-
+    <style name="AppBaseTheme.Dark" parent="Theme.AppCompat">
+    </style>
+    
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
@@ -21,12 +23,23 @@
         <item name="listItemBackground">@drawable/grey_frame</item>
         <item name="baseBackground">@color/base_bg</item>
     </style>
+
+    <style name="AppTheme.Dark" parent="AppBaseTheme.Dark">
+        <item name="android:windowBackground">@drawable/dark_background_pattern</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Dark</item>
+        <item name="listItemBackground">@drawable/grey_frame</item>
+        <item name="baseBackground">@color/base_bg_dark</item>
+    </style>
+
     <style name="ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="backgroundStacked">@drawable/dark_background_pattern</item>
     </style>
-    <style name="AppTheme.PageDetial">
-        <item name="android:windowActionBarOverlay">true</item>
+
+    <style name="ActionBar.Dark" parent="@style/Widget.AppCompat.ActionBar.Solid">
+        <item name="backgroundStacked">@drawable/dark_background_pattern</item>
     </style>
+
     <style name="TextHeader">
         <item name="android:textSize">@dimen/text_size_xlarge</item>
         <item name="android:textStyle">bold</item>
@@ -34,11 +47,13 @@
         <item name="android:maxLines">@integer/text_header_max_lines</item>
         <item name="android:ellipsize">end</item>
     </style>
+
     <style name="TextHeaderSub">
         <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:textStyle">italic</item>
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
+
     <style name="HomePaneHeader">
        <item name="android:textSize">@dimen/text_size_medium</item>
        <item name="android:textStyle">bold</item>

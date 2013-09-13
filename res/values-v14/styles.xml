@@ -8,7 +8,13 @@
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- API 14 theme customizations can go here. -->
     </style>
+    <style name="AppBaseTheme.Dark" parent="Theme.AppCompat">
+    </style>
     <style name="ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="backgroundStacked">@drawable/dark_background_pattern</item>
+        <item name="android:backgroundStacked">@drawable/dark_background_pattern</item>
+    </style>
+    <style name="ActionBar.Dark" parent="@style/Widget.AppCompat.ActionBar.Solid">
         <item name="backgroundStacked">@drawable/dark_background_pattern</item>
         <item name="android:backgroundStacked">@drawable/dark_background_pattern</item>
     </style>

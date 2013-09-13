@@ -8,7 +8,6 @@ import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -33,7 +32,7 @@ import cheng.app.cnbeta.util.HelpUtils;
  * This activity also implements the required {@link PageListFragment.Callbacks}
  * interface to listen for item selections.
  */
-public class PageListActivity extends FragmentActivity implements PageListFragment.Callbacks,
+public class PageListActivity extends ThemedFragmentActivity implements PageListFragment.Callbacks,
         TabListener, OnPageChangeListener {
 
     private boolean mTwoPane;

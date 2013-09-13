@@ -7,7 +7,6 @@ import cheng.app.cnbeta.lib.SlidingUpPanelLayout.PanelSlideListener;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.GravityCompat;
@@ -20,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -32,7 +32,7 @@ import android.widget.Toast;
  * This activity is mostly just a 'shell' activity containing nothing more than
  * a {@link PageDetailFragment}.
  */
-public class PageDetailActivity extends FragmentActivity
+public class PageDetailActivity extends ThemedFragmentActivity
     implements PanelSlideListener, Callbacks, DrawerListener {
     static final String TAG = "PageDetailActivity";
     private static final String STATE_SLIDINGPANE_OPEN = "slidingpane_open";
@@ -75,6 +75,7 @@ public class PageDetailActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_page_detail);
 
         // Show the Up button in the action bar.

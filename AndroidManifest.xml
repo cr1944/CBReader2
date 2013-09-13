@@ -27,7 +27,6 @@
         <activity
             android:name=".PageDetailActivity"
             android:label="@string/title_page_detail"
-            android:theme="@style/AppTheme.PageDetial"
             android:windowSoftInputMode="adjustUnspecified|stateAlwaysHidden"
             android:parentActivityName=".PageListActivity" >
             <meta-data
