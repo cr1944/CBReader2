@@ -37,7 +37,7 @@
     </LinearLayout>
 
     <View
-        android:background="@drawable/divider"
+        android:background="?listItemDivider"
         android:layout_width="match_parent"
         android:layout_height="1dp" />
 

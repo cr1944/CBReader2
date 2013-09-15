@@ -17,8 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/page_item_padding"
-        android:background="#bbb"
-        android:textColor="#fff"
+        android:background="#888"
+        android:textColor="#eee"
         android:textStyle="bold"
         android:textAppearance="?android:attr/textAppearanceSmallInverse" />
 

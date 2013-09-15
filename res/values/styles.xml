@@ -22,14 +22,16 @@
         <item name="android:actionBarStyle">@style/ActionBar</item>
         <item name="listItemBackground">@drawable/grey_frame</item>
         <item name="baseBackground">@color/base_bg</item>
+        <item name="listItemDivider">@drawable/divider</item>
     </style>
 
     <style name="AppTheme.Dark" parent="AppBaseTheme.Dark">
         <item name="android:windowBackground">@drawable/dark_background_pattern</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarStyle">@style/ActionBar.Dark</item>
-        <item name="listItemBackground">@drawable/grey_frame</item>
+        <item name="listItemBackground">@drawable/dark_frame</item>
         <item name="baseBackground">@color/base_bg_dark</item>
+        <item name="listItemDivider">@drawable/divider_dark</item>
     </style>
 
     <style name="ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
@@ -37,7 +39,6 @@
     </style>
 
     <style name="ActionBar.Dark" parent="@style/Widget.AppCompat.ActionBar.Solid">
-        <item name="backgroundStacked">@drawable/dark_background_pattern</item>
     </style>
 
     <style name="TextHeader">
