@@ -20,5 +20,5 @@
     android:layout_height="match_parent"
     android:padding="16dp"
     android:textSize="@dimen/text_size_medium"
-    android:background="@android:color/white"
+    android:background="@android:color/transparent"
     android:textColor="@android:color/black" />

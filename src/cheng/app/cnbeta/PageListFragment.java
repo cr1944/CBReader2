@@ -10,7 +10,7 @@ import cheng.app.cnbeta.lib.EndlessAdapter;
 import cheng.app.cnbeta.util.Configs;
 import cheng.app.cnbeta.util.HttpUtil;
 import cheng.app.cnbeta.util.DataUtil;
-
+import cheng.app.cnbeta.util.Utils;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -138,6 +138,13 @@ public class PageListFragment extends ListFragment implements
         } else {
             refresh(-1);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mAdapter.setFontSize();
+
     }
 
     void refresh(long lastId) {
@@ -380,6 +387,12 @@ public class PageListFragment extends ListFragment implements
         public void changeData(Cursor c) {
             mAdapter.swapCursor(c);
             onDataReady();
+        }
+
+        public void setFontSize() {
+            String textSize = Utils.getSharedPreferences(getActivity(), Utils.PREFERENCE_FONT_SIZE,
+                    Utils.PREFERENCE_FONT_SIZE_DEFAULT);
+            mAdapter.setFontSize(Integer.parseInt(textSize));
         }
 
         @Override

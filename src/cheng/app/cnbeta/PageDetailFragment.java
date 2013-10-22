@@ -31,6 +31,7 @@ import cheng.app.cnbeta.data.CBContract.CacheColumns;
 import cheng.app.cnbeta.data.CBContract.HmColumns;
 import cheng.app.cnbeta.data.CBContract.NewsColumns;
 import cheng.app.cnbeta.util.DataUtil;
+import cheng.app.cnbeta.util.Utils;
 
 /**
  * A fragment representing a single Page detail screen.
@@ -118,7 +119,9 @@ public class PageDetailFragment extends Fragment implements LoaderCallbacks<Curs
         mEmptyView = (TextView) rootView.findViewById(android.R.id.empty);
         mProgressBar = (ProgressBar) rootView.findViewById(android.R.id.progress);
         mContentView = rootView.findViewById(R.id.listContainer);
-        mWebView.setBackgroundColor(getResources().getColor(R.color.webview_bg));
+        int theme = Utils.getAppTheme(getActivity());
+        mWebView.setBackgroundColor(getResources().getColor(theme == R.style.AppTheme_Dark ?
+                R.color.webview_bg_dark : R.color.webview_bg));
         WebSettings s = mWebView.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDefaultTextEncodingName("utf-8");

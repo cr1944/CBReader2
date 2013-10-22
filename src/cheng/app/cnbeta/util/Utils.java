@@ -10,7 +10,7 @@ public class Utils {
     public static final String PREFERENCE_THEME = "preferences_theme";
     public static final String PREFERENCE_FONT_SIZE = "preferences_font_size";
     public static final String PREFERENCE_THEME_DEFAULT = "0";
-    public static final String PREFERENCE_FONT_SIZE_DEFAULT = "0";
+    public static final String PREFERENCE_FONT_SIZE_DEFAULT = "16";
     private static SharedPreferences sharedPreferences;
 
     public static String getSharedPreferences(Context c, String key, String defaultValue) {

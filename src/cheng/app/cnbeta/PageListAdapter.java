@@ -6,6 +6,7 @@ import cheng.app.cnbeta.data.CBContract.HmColumns;
 import cheng.app.cnbeta.data.CBContract.NewsColumns;
 import cheng.app.cnbeta.util.HttpUtil;
 import cheng.app.cnbeta.util.TimeUtil;
+import cheng.app.cnbeta.util.Utils;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
@@ -18,10 +19,18 @@ import android.widget.TextView;
 
 public class PageListAdapter extends CursorAdapter {
     private int mPageId;
+    private static int mTextSize = Integer.parseInt(Utils.PREFERENCE_FONT_SIZE_DEFAULT);
 
     public PageListAdapter(Context context, int pageId) {
         super(context, null, 0);
         mPageId = pageId;
+    }
+
+    public void setFontSize(int fontSize) {
+        if (mTextSize != fontSize) {
+            mTextSize = fontSize;
+            notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -39,6 +48,7 @@ public class PageListAdapter extends CursorAdapter {
         final TextView hmView = (TextView) arg0.findViewById(R.id.page_list_hm);
         final TextView titleView = (TextView) arg0.findViewById(R.id.page_list_hm_title);
         hmView.setText(hm);
+        hmView.setTextSize(mTextSize);
         titleView.setText(title);
     }
 
@@ -71,11 +81,9 @@ public class PageListAdapter extends CursorAdapter {
             holder.comment.setText(R.string.cmt_closed);
         }
         holder.text.setText(Html.fromHtml(text));
-        Picasso.with(mContext)
-        .load(logo)
-        .fit()
-        .placeholder(R.drawable.ic_launcher)
-        .into(holder.icon);
+        holder.text.setTextSize(mTextSize);
+        Picasso.with(mContext).load(logo).fit().placeholder(R.drawable.ic_launcher)
+            .into(holder.icon);
     }
 
     @Override

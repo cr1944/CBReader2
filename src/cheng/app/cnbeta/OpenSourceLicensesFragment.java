@@ -14,6 +14,7 @@ public class OpenSourceLicensesFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         WebView webView = new WebView(getActivity());
+        webView.setBackgroundColor(0);
         webView.loadUrl("file:///android_asset/licenses.html");
 
         return new AlertDialog.Builder(getActivity())

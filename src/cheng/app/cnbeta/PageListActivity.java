@@ -2,7 +2,6 @@
 package cheng.app.cnbeta;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
-
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
@@ -11,10 +10,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
+import android.view.View;
 import cheng.app.cnbeta.util.HelpUtils;
 
 /**
@@ -34,11 +34,56 @@ import cheng.app.cnbeta.util.HelpUtils;
  */
 public class PageListActivity extends ThemedFragmentActivity implements PageListFragment.Callbacks,
         TabListener, OnPageChangeListener {
-
+    private static final String TAG = "PageListActivity";
     private boolean mTwoPane;
     private PageFragmentAdapter mPageFragmentAdapter;
     private ViewPager mViewPager;
     private PullToRefreshAttacher mPullToRefreshAttacher;
+
+    public static class DepthPageTransformer implements ViewPager.PageTransformer {
+
+        @Override
+        public void transformPage(View view, float position) {
+            int pageWidth = view.getWidth();
+            int pageHeight = view.getHeight();
+
+            if (position <= 0) {
+                view.setPivotX(pageWidth);
+                view.setPivotY(pageHeight / 2);
+                view.setAlpha(1 + position);
+                view.setRotationY(22.5f * position);
+            } else if (position >= 0.25) {
+                view.setPivotX(0);
+                view.setPivotY(pageHeight / 2);
+                view.setAlpha(1.25f - position);
+                view.setRotationY(22.5f * position - 22.5f / 4);
+            }
+        }
+    }
+
+    public static class DepthPageTransformer2 implements ViewPager.PageTransformer {
+
+        @Override
+        public void transformPage(View view, float position) {
+            int pageWidth = view.getWidth();
+            int pageHeight = view.getHeight();
+
+            if (position == 0) {
+                view.setAlpha(1);
+                view.setRotationY(0);
+            } else if (position < 0) {
+                view.setPivotX(pageWidth);
+                view.setPivotY(pageHeight / 2);
+                view.setAlpha(1 + position / 2);
+                view.setRotationY(22.5f * position);
+            } else {
+                view.setPivotX(0);
+                view.setPivotY(pageHeight / 2);
+                view.setAlpha(1 - position / 2);
+                view.setRotationY(22.5f * position);
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +103,9 @@ public class PageListActivity extends ThemedFragmentActivity implements PageList
             pageWidth = 0.5f;
         } else if (shortPageWidth) {
             pageWidth = 0.75f;
+            mViewPager.setPageTransformer(true, new DepthPageTransformer());
+        } else {
+            mViewPager.setPageTransformer(true, new DepthPageTransformer2());
         }
         mPageFragmentAdapter = new PageFragmentAdapter(fm, pageWidth);
         mViewPager.setAdapter(mPageFragmentAdapter);
