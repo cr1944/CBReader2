@@ -14,13 +14,12 @@ public class OpenSourceLicensesFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         WebView webView = new WebView(getActivity());
-        webView.setBackgroundColor(0);
         webView.loadUrl("file:///android_asset/licenses.html");
 
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.about_licenses)
                 .setView(webView)
-                .setPositiveButton(android.R.string.ok,
+                .setPositiveButton(android.R.string.cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 dialog.dismiss();

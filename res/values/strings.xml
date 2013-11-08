@@ -10,6 +10,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_abouts">Abouts</string>
     <string name="action_share">Share</string>
+    <string name="developed_by">Developed by:</string>
     <string name="cmt_number"><xliff:g>%d</xliff:g>条评论</string>
     <string name="cmt_closed">评论已关闭</string>
     <string name="display_cmt">查看评论（<xliff:g example="0">%d</xliff:g>）</string>
@@ -27,12 +28,6 @@
     <string name="report_fail_2">您今天已经举报了很多次，谢谢您的参与。</string>
     <string name="report_fail_3">出错了</string>
     <string name="about_licenses">Open Source Licenses</string>
-    <string name="about_body"><![CDATA[
-        <b>CBReader</b><br>
-        Version %s<br>
-        by <a href="mailto:ryancheng1944@gmail.com">Ryan Cheng</a><br><br>
-        <a href="https://github.com/cr1944/CBReader2">GitHub</a>
-    ]]></string>
     <string name="preferences_theme_title">Theme</string>
     <string name="preferences_font_size">FontSize</string>
 </resources>

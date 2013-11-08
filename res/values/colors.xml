@@ -4,4 +4,6 @@
     <color name="webview_bg_dark">#363636</color>
     <color name="base_bg_dark">#242424</color>
     <color name="base_bg">#eee</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="circular_image_border_color">#ff13a1d0</color>
 </resources>

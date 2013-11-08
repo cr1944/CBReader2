@@ -4,7 +4,6 @@ package cheng.app.cnbeta;
 import cheng.app.cnbeta.PageDetailFragment.Callbacks;
 import cheng.app.cnbeta.lib.SlidingUpPanelLayout;
 import cheng.app.cnbeta.lib.SlidingUpPanelLayout.PanelSlideListener;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -23,6 +22,7 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +53,7 @@ public class PageDetailActivity extends ThemedFragmentActivity
     private long mNewsId;
     private PageCommentsFragment mCommentsFragment;
     private PostCommentFragment mPostCommentFragment;
+    private ShareActionProvider mShareActionProvider;
     private OnClickListener mSendClickListener = new OnClickListener() {
         
         @Override
@@ -155,11 +156,16 @@ public class PageDetailActivity extends ThemedFragmentActivity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.detail_activity_actions, menu);
         mOptionsMenu = menu;
+        MenuItem item = menu.findItem(R.id.action_share);
+
+        // Fetch and store ShareActionProvider
+        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        setShareIntent();
         MenuItem menuItem = menu.findItem(R.id.action_cmt);
         if (mCmtNumber < 0) {
             menuItem.setTitle(R.string.cmt_closed);
@@ -197,6 +203,17 @@ public class PageDetailActivity extends ThemedFragmentActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setShareIntent() {
+        if (mShareActionProvider != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("http://www.cnbeta.com/articles/" + mNewsId);
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra("android.intent.extra.TEXT", sb.toString());
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
     }
 
     private void triggerRefresh(boolean refreshing) {

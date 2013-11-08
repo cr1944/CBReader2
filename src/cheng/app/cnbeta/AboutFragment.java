@@ -5,20 +5,17 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.text.Html;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import cheng.app.cnbeta.util.HelpUtils;
 
 public class AboutFragment extends DialogFragment {
@@ -39,28 +36,42 @@ public class AboutFragment extends DialogFragment {
             versionName = VERSION_NA;
         }
 
-        SpannableStringBuilder aboutBody = new SpannableStringBuilder();
-        aboutBody.append(Html.fromHtml(getString(R.string.about_body, versionName)));
-
-        SpannableString licensesLink = new SpannableString(getString(R.string.about_licenses));
-        licensesLink.setSpan(new ClickableSpan() {
-
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        View v = layoutInflater.inflate(R.layout.dialog_about, null);
+        TextView versionText = (TextView) v.findViewById(R.id.dialog_about_version);
+        LinearLayout author = (LinearLayout) v.findViewById(R.id.author);
+        versionText.setText(versionName);
+        author.setOnClickListener(new View.OnClickListener() {
+            
             @Override
-            public void onClick(View widget) {
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://plus.google.com/u/0/114474183775310756510"));
+                startActivity(i);
+            }
+        });
+        TextView github = (TextView) v.findViewById(R.id.github);
+        github.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/cr1944/CBReader2"));
+                startActivity(i);
+            }
+        });
+        TextView opensource = (TextView) v.findViewById(R.id.opensource);
+        opensource.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
                 HelpUtils.showOpenSourceLicenses(getActivity());
             }
-        }, 0, licensesLink.length(), 0);
-        aboutBody.append("\n\n");
-        aboutBody.append(licensesLink);
+        });
 
-        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-        TextView aboutBodyView = (TextView) layoutInflater.inflate(R.layout.dialog_about, null);
-        aboutBodyView.setText(aboutBody);
-        aboutBodyView.setMovementMethod(new LinkMovementMethod());
-
-        return new AlertDialog.Builder(getActivity()).setTitle(R.string.action_abouts)
-                .setView(aboutBodyView)
-                .setPositiveButton(android.R.string.ok, new OnClickListener() {
+        return new AlertDialog.Builder(getActivity())
+                .setView(v)
+                .setPositiveButton(android.R.string.cancel, new OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

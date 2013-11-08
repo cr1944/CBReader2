@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme for API 14+. This theme completely replaces
@@ -13,9 +13,15 @@
     <style name="ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="backgroundStacked">@drawable/dark_background_pattern</item>
         <item name="android:backgroundStacked">@drawable/dark_background_pattern</item>
+        <item name="android:background">@drawable/ab_solid_adia</item>
+        <item name="background">@drawable/ab_solid_adia</item>
+        <item name="android:titleTextStyle">@style/ActionBarTitle</item>
+        <item name="titleTextStyle">@style/ActionBarTitle</item>
     </style>
-    <style name="ActionBar.Dark" parent="@style/Widget.AppCompat.ActionBar.Solid">
+    <style name="ActionBarTitle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <item name="android:textColor">@color/white</item>
     </style>
+
     <style name="HomePaneHeader">
        <item name="android:textSize">@dimen/text_size_medium</item>
        <item name="android:textStyle">bold</item>

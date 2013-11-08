@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -28,7 +28,7 @@
     <style name="AppTheme.Dark" parent="AppBaseTheme.Dark">
         <item name="android:windowBackground">@drawable/dark_background_pattern</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:actionBarStyle">@style/ActionBar.Dark</item>
+        <item name="android:actionBarStyle">@style/ActionBar</item>
         <item name="listItemBackground">@drawable/dark_frame</item>
         <item name="baseBackground">@color/base_bg_dark</item>
         <item name="listItemDivider">@drawable/divider_dark</item>
@@ -36,9 +36,13 @@
 
     <style name="ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="backgroundStacked">@drawable/dark_background_pattern</item>
+        <item name="android:background">@drawable/ab_solid_adia</item>
+        <item name="background">@drawable/ab_solid_adia</item>
+        <item name="titleTextStyle">@style/ActionBarTitle</item>
     </style>
 
-    <style name="ActionBar.Dark" parent="@style/Widget.AppCompat.ActionBar.Solid">
+    <style name="ActionBarTitle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="TextHeader">

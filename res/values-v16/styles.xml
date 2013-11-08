@@ -8,4 +8,8 @@
         <item name="android:maxLines">@integer/text_header_max_lines</item>
         <item name="android:ellipsize">end</item>
     </style>
+    <style name="ActionBarTitle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 </resources>
