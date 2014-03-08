@@ -1,0 +1,5 @@
+<resources>
+
+    <item name="activity_page_detail" type="layout">@layout/activity_page_detail_land</item>
+
+</resources>

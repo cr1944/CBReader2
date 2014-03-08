@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="8.0dip"
+    android:divider="?android:dividerVertical"
+    android:orientation="vertical"
+    android:showDividers="middle" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8.0dip" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_launcher"
+            android:drawablePadding="8.0dip"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center_vertical"
+            android:text="@string/app_name"
+            android:textSize="18.0sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/dialog_about_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8.0dip"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center_vertical"
+            android:textColor="?android:attr/textColorTertiary"
+            android:textSize="18.0sp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0.0dip"
+        android:layout_weight="1.0" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8.0dip" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:paddingBottom="8.0dip"
+                android:text="@string/developed_by"
+                android:textSize="16.0sp" />
+
+            <LinearLayout
+                android:id="@+id/author"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/listPreferredItemHeight"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:orientation="horizontal"
+                android:paddingLeft="8.0dip" >
+
+                <cheng.app.cnbeta.ui.CircularImageView
+                    android:layout_width="48.0dip"
+                    android:layout_height="48.0dip"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ryancheng" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
+                    android:padding="16.0dip"
+                    android:text="Ryan Cheng"
+                    android:textSize="16.0sp" />
+            </LinearLayout>
+
+            <ImageView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/mmqrcode1382450346060"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/app_name"
+                android:layout_marginRight="8.0dip"
+                android:layout_marginLeft="8.0dip" />
+
+            <TextView android:id="@+id/github"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/listPreferredItemHeight"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:fontFamily="sans-serif-light"
+                android:text="GitHub"
+                android:textSize="16.0sp" />
+
+            <TextView android:id="@+id/opensource"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/listPreferredItemHeight"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:fontFamily="sans-serif-light"
+                android:text="@string/about_licenses"
+                android:textSize="16.0sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

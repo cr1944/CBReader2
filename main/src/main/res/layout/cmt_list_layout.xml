@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <FrameLayout
+        android:id="@+id/page_detail_comments_list"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:padding="@dimen/multipane_half_padding"
+        android:layout_height="0dp" />
+
+    <LinearLayout
+        android:id="@+id/bottom_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?baseBackground"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/embedded_text_editor"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="8dip"
+            android:layout_weight="1.0"
+            android:hint="@string/type_to_compose_text_enter_to_send"
+            android:imeOptions="actionSend|flagNoEnterAction"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLength="2000"
+            android:maxLines="3"
+            android:minHeight="@dimen/input_text_height"
+            android:nextFocusRight="@+id/send_button"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/send_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="4dip"
+            android:contentDescription="@string/send"
+            android:drawablePadding="0dip"
+            android:nextFocusLeft="@+id/embedded_text_editor"
+            android:src="@drawable/send_button_selector" />
+    </LinearLayout>
+
+</merge>
